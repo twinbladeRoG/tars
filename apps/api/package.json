@@ -1,14 +1,17 @@
 {
-    "name": "@tars/api",
-    "version": "0.1.0",
-    "description": "Tars API Service",
-    "scripts": {
-        "docker:up": "docker compose up --build -d",
-        "docker:down": "docker compose down --remove-orphans",
-        "dev": "fastapi dev main.py",
-        "start": "fastapi run main.py",
-        "lint": "uv run ruff check",
-        "migrate": "uv run alembic upgrade head",
-        "migration:history": "uv run alembic history --verbose"
-    }
+  "name": "@tars/api",
+  "version": "0.1.0",
+  "description": "Tars API Service",
+  "scripts": {
+    "dev": "fastapi dev main.py",
+    "docker:down": "docker compose down --remove-orphans",
+    "docker:up": "docker compose up --build -d",
+    "lint": "uv run ruff check",
+    "migrate": "uv run alembic upgrade head",
+    "migration:history": "uv run alembic history --verbose",
+    "start": "fastapi run main.py"
+  },
+  "dependencies": {
+    "@tars/prettier": "workspace:^"
+  }
 }

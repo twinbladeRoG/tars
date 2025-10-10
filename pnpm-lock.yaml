@@ -7,7 +7,7 @@ settings:
 importers:
 
   .:
-    dependencies:
+    devDependencies:
       '@commitlint/cli':
         specifier: ^20.1.0
         version: 20.1.0(@types/node@24.7.1)(typescript@5.9.2)
@@ -23,19 +23,18 @@ importers:
       cz-customizable:
         specifier: ^7.5.1
         version: 7.5.1
-      prettier-plugin-packagejson:
-        specifier: ^2.5.19
-        version: 2.5.19(prettier@3.6.2)
-      rimraf:
-        specifier: ^6.0.1
-        version: 6.0.1
-    devDependencies:
       husky:
         specifier: ^9.1.7
         version: 9.1.7
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
+      prettier-plugin-packagejson:
+        specifier: ^2.5.19
+        version: 2.5.19(prettier@3.6.2)
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.0.1
       turbo:
         specifier: ^2.5.8
         version: 2.5.8
@@ -43,7 +42,11 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
-  apps/api: {}
+  apps/api:
+    dependencies:
+      '@tars/prettier':
+        specifier: workspace:^
+        version: link:../../packages/prettier
 
   packages/prettier: {}
 

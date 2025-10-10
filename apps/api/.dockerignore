@@ -1,0 +1,10 @@
+__pycache__
+.ruff_cache
+.turbo
+.venv
+.vscode
+notebooks
+package.json
+compose.yml
+.git
+.gitignore

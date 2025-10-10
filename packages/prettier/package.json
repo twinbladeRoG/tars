@@ -1,0 +1,10 @@
+{
+  "name": "@tars/prettier",
+  "version": "1.0.0",
+  "description": "Common prettier config",
+  "keywords": [],
+  "license": "ISC",
+  "author": "Sohan Dutta",
+  "main": "index.js",
+  "scripts": {}
+}

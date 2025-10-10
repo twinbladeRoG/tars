@@ -1,0 +1,17 @@
+target-version = "py312"
+
+exclude = [".venv", "**/test/*.py"]
+
+[lint]
+select = [
+    "FAST001",
+    "FAST002",
+    "FAST003",
+    "T201",
+    "T203",
+    "F401",
+]
+preview = true
+
+[lint.per-file-ignores]
+"*.ipynb" = ["T201"]

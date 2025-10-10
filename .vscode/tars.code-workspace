@@ -1,0 +1,60 @@
+{
+  "folders": [
+    { "name": "@tars", "path": ".." },
+    { "name": "@tars/api", "path": "../apps/api" },
+    { "name": "@tars/web", "path": "../apps/web" },
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "[javascript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    },
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[python]": {
+      "editor.defaultFormatter": "charliermarsh.ruff",
+      "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit",
+        "source.organizeImports": "explicit",
+      },
+    },
+    "notebook.formatOnSave.enabled": true,
+    "notebook.codeActionsOnSave": {
+      "notebook.source.fixAll": "explicit",
+      "notebook.source.organizeImports": "explicit",
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+
+    "cSpell.words": []
+  },
+"extensions": {
+    "recommendations": [
+      "aaron-bond.better-comments",
+      "streetsidesoftware.code-spell-checker",
+      "naumovs.color-highlight",
+      "dbaeumer.vscode-eslint",
+      "mhutchie.git-graph",
+      "antfu.iconify",
+      "esbenp.prettier-vscode",
+      "yoavbls.pretty-ts-errors",
+      "prisma.prisma",
+      "bradlc.vscode-tailwindcss",
+      "gruntfuggly.todo-tree",
+      "charliermarsh.ruff",
+      "ms-toolsai.jupyter",
+      "ms-toolsai.jupyter-keymap",
+      "ms-python.debugpy",
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "njqdev.vscode-python-typehint",
+      "mintlify.document",
+      "oderwat.indent-rainbow",
+    ],
+  },
+}

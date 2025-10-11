@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { MantineProvider, TextInput } from '@mantine/core';
 
 import Button from '@/components/ui/button';
 
 import reactLogo from './assets/react.svg';
+
+import '@mantine/core/styles.css';
 
 import viteLogo from '/vite.svg';
 
@@ -10,27 +13,30 @@ function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank" rel="noreferrer noopener">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer noopener">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button type="button" onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <Button>Click</Button>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-    </>
+    <MantineProvider>
+      <>
+        <div>
+          <a href="https://vite.dev" target="_blank" rel="noreferrer noopener">
+            <img src={viteLogo} className="logo" alt="Vite logo" />
+          </a>
+          <a href="https://react.dev" target="_blank" rel="noreferrer noopener">
+            <img src={reactLogo} className="logo react" alt="React logo" />
+          </a>
+        </div>
+        <h1>Vite + React</h1>
+        <div className="card">
+          <button type="button" onClick={() => setCount((count) => count + 1)}>
+            count is {count}
+          </button>
+          <p>
+            Edit <code>src/App.tsx</code> and save to test HMR
+          </p>
+        </div>
+        <Button>Click</Button>
+        <TextInput placeholder="Your email" label="Email" withAsterisk />
+        <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
+      </>
+    </MantineProvider>
   );
 }
 

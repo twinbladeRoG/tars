@@ -53,6 +53,11 @@ export default defineConfig([
           map: [['', './public']],
           extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },
+        typescript: {
+          alwaysTryTypes: true,
+          bun: true,
+          project: ['./tsconfig.node.json', './tsconfig.app.json', './tsconfig.json'],
+        },
       },
     },
     rules: {

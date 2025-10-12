@@ -11,7 +11,7 @@ from src.modules.models import UserBase
 config = context.config
 
 settings = get_settings()
-config.set_main_option("sqlalchemy.url", str(settings.SQLALCHEMY_DATABASE_URI))
+config.set_main_option("sqlalchemy.url", settings.SQLALCHEMY_DATABASE_URI)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

@@ -1,7 +1,7 @@
 import warnings
 from typing import Literal
 
-from pydantic import PostgresDsn, computed_field, model_validator
+from pydantic import computed_field, model_validator
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Self
@@ -22,7 +22,7 @@ class Settings(BaseSettings):
 
     @computed_field
     @property
-    def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
         url = MultiHostUrl.build(
             scheme="postgresql+psycopg2",
             username=self.POSTGRES_USER,
@@ -32,7 +32,7 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
-        return url
+        return url.unicode_string()
 
     LLM_HOST: str = "localhost"
 
@@ -61,3 +61,6 @@ class Settings(BaseSettings):
         self._check_default_secret("POSTGRES_PASSWORD", self.POSTGRES_PASSWORD)
 
         return self
+
+
+settings = Settings()

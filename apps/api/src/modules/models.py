@@ -6,7 +6,7 @@ from pydantic import field_validator
 from sqlmodel import Column, DateTime, Field
 
 from src.core.security import get_password_hash
-from src.modules.users.models import UserBase
+from src.modules.users.schema import UserBase
 from src.utils.time import utcnow
 
 

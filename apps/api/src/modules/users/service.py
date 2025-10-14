@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 
 from src.core.logger import logger
-from src.modules.models import User
+from src.models.models import User
 
 
 class UserService:

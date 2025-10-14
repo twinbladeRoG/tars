@@ -1,10 +1,23 @@
 import warnings
-from typing import Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import computed_field, model_validator
-from pydantic_core import MultiHostUrl
+from pydantic import (
+    AnyUrl,
+    BeforeValidator,
+    PostgresDsn,
+    computed_field,
+    model_validator,
+)
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Self
+
+
+def parse_cors(v: Any) -> list[str] | str:
+    if isinstance(v, str) and not v.startswith("["):
+        return [i.strip() for i in v.split(",") if i.strip()]
+    elif isinstance(v, list | str):
+        return v
+    raise ValueError(v)
 
 
 class Settings(BaseSettings):
@@ -14,6 +27,13 @@ class Settings(BaseSettings):
 
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
+    CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = []
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def all_cors_origins(self) -> list[str]:
+        return [str(origin).rstrip("/") for origin in self.CORS_ORIGINS]
+
     POSTGRES_SERVER: str = "localhost"
     POSTGRES_PORT: int = 5432
     POSTGRES_USER: str = "change_this"
@@ -22,8 +42,8 @@ class Settings(BaseSettings):
 
     @computed_field
     @property
-    def SQLALCHEMY_DATABASE_URI(self) -> str:
-        url = MultiHostUrl.build(
+    def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
+        return PostgresDsn.build(
             scheme="postgresql+psycopg2",
             username=self.POSTGRES_USER,
             password=self.POSTGRES_PASSWORD,
@@ -31,8 +51,6 @@ class Settings(BaseSettings):
             port=self.POSTGRES_PORT,
             path=self.POSTGRES_DB,
         )
-
-        return url.unicode_string()
 
     LLM_HOST: str = "localhost"
 

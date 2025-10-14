@@ -5,12 +5,14 @@ from typing import Optional
 from pydantic import BaseModel
 from sqlmodel import Column, DateTime, Field
 
+from src.utils.time import utcnow
+
 
 class TimeStampMixin(BaseModel):
     created_at: Optional[datetime] = Field(
         sa_column=Column(
             DateTime,
-            default=datetime.utcnow,
+            default=utcnow,
             nullable=False,
         )
     )
@@ -18,8 +20,8 @@ class TimeStampMixin(BaseModel):
     updated_at: Optional[datetime] = Field(
         sa_column=Column(
             DateTime,
-            default=datetime.utcnow,
-            onupdate=datetime.utcnow,
+            default=utcnow,
+            onupdate=utcnow,
         )
     )
 

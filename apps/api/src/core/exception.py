@@ -6,9 +6,11 @@ class CustomException(Exception):
     error_code = HTTPStatus.BAD_GATEWAY
     message = HTTPStatus.BAD_GATEWAY.description
 
-    def __init__(self, message=None):
+    def __init__(self, message=None, *, error_code=None):
         if message:
             self.message = message
+        if error_code:
+            self.error_code = error_code
 
 
 class BadRequestException(CustomException):

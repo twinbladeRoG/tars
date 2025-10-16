@@ -19,6 +19,7 @@ class BaseRepository(Generic[ModelType]):
         model = self.model_class(**attributes)
 
         try:
+            model = self.model_class.model_validate(model)
             self.session.add(model)
             self.session.commit()
             return model

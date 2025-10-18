@@ -88,17 +88,13 @@ export function SmoothCursor({
   const previousAngle = useRef(0);
   const accumulatedRotation = useRef(0);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const cursorX = useSpring(0, springConfig);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const cursorY = useSpring(0, springConfig);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const rotation = useSpring(0, {
     ...springConfig,
     damping: 60,
     stiffness: 300,
   });
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const scale = useSpring(1, {
     ...springConfig,
     stiffness: 500,
@@ -127,9 +123,7 @@ export function SmoothCursor({
 
       const speed = Math.sqrt(Math.pow(velocity.current.x, 2) + Math.pow(velocity.current.y, 2));
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       cursorX.set(currentPos.x);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       cursorY.set(currentPos.y);
 
       if (speed > 0.1) {
@@ -140,16 +134,13 @@ export function SmoothCursor({
         if (angleDiff > 180) angleDiff -= 360;
         if (angleDiff < -180) angleDiff += 360;
         accumulatedRotation.current += angleDiff;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         rotation.set(accumulatedRotation.current);
         previousAngle.current = currentAngle;
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         scale.set(0.95);
         setIsMoving(true);
 
         const timeout = setTimeout(() => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
           scale.set(1);
           setIsMoving(false);
         }, 150);
@@ -182,15 +173,11 @@ export function SmoothCursor({
     <motion.div
       style={{
         position: 'fixed',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         left: cursorX,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         top: cursorY,
         translateX: '-50%',
         translateY: '-50%',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         rotate: rotation,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         scale: scale,
         zIndex: 100,
         pointerEvents: 'none',

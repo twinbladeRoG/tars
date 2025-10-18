@@ -5,6 +5,7 @@ from pydantic import (
     AnyUrl,
     BeforeValidator,
     PostgresDsn,
+    SecretStr,
     computed_field,
     model_validator,
 )
@@ -52,7 +53,10 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
-    LLM_HOST: str = "localhost"
+    LOCAL_LLM_HOST: str = "http://localhost:8090"
+    LOCAL_LLM_SECRET: SecretStr = SecretStr("sk-no-key-required")
+
+    OPEN_API_KEY: SecretStr = SecretStr("sk-no-key-required")
 
     LOG_LEVEL: Literal["INFO", "DEBUG", "ERROR", "WARNING", "CRITICAL"] = "INFO"
 

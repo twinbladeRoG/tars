@@ -1,40 +1,21 @@
-import { useState } from 'react';
-import { MantineProvider, TextInput } from '@mantine/core';
+import { MantineProvider } from '@mantine/core';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import Button from '@/components/ui/button';
-
-import reactLogo from './assets/react.svg';
+import Router from './Router';
 
 import '@mantine/core/styles.css';
 
-import viteLogo from '/vite.svg';
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
+});
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <MantineProvider>
-      <div>
-        <a href="https://vite.dev" target="_blank" rel="noreferrer noopener">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer noopener">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button type="button" onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <Button>Click</Button>
-      <TextInput placeholder="Your email" label="Email" withAsterisk />
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-    </MantineProvider>
+    <QueryClientProvider client={queryClient}>
+      <MantineProvider defaultColorScheme="dark">
+        <Router />
+      </MantineProvider>
+    </QueryClientProvider>
   );
 }
 

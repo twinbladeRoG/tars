@@ -62,6 +62,14 @@ export default defineConfig([
     },
     rules: {
       'react-x/no-class-component': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          'argsIgnorePattern': '^_',
+          'varsIgnorePattern': '^_',
+          'caughtErrorsIgnorePattern': '^_',
+        },
+      ],
       '@eslint-react/dom/no-unsafe-target-blank': 'error',
       '@eslint-react/dom/no-missing-button-type': 'error',
       'simple-import-sort/imports': [

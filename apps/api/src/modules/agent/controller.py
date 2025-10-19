@@ -1,4 +1,5 @@
-from typing import Any
+from typing import Any, Optional
+from uuid import UUID
 
 from .agent import RootAgent
 
@@ -17,5 +18,7 @@ class AgentController:
 
         return state, mermaid
 
-    def stream(self):
-        pass
+    def stream(self, user_message: str, conversation_id: Optional[UUID | None] = None):
+        return self.agent.stream(
+            user_message=user_message, conversation_id=conversation_id
+        )

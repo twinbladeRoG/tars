@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@iconify/react": "^6.0.2",
     "@mantine/code-highlight": "^8.3.4",
     "@mantine/core": "^8.3.4",
     "@mantine/dates": "^8.3.4",

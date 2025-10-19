@@ -70,6 +70,13 @@ export default defineConfig([
           'caughtErrorsIgnorePattern': '^_',
         },
       ],
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        {
+          checksVoidReturn: false,
+        },
+      ],
+      'no-console': 'error',
       '@eslint-react/dom/no-unsafe-target-blank': 'error',
       '@eslint-react/dom/no-missing-button-type': 'error',
       'simple-import-sort/imports': [

@@ -58,6 +58,10 @@ class Settings(BaseSettings):
 
     OPEN_API_KEY: SecretStr = SecretStr("sk-no-key-required")
 
+    VECTOR_DB_URL: str = "http://localhost:6333"
+
+    REDIS_URL: str = "redis://localhost:6379"
+
     LOG_LEVEL: Literal["INFO", "DEBUG", "ERROR", "WARNING", "CRITICAL"] = "INFO"
 
     model_config = SettingsConfigDict(

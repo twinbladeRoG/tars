@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from pydantic import ValidationError
+from qdrant_client import QdrantClient
 from sqlmodel import Session
 
 from src.models.models import User
@@ -13,6 +14,7 @@ from src.modules.auth.schema import TokenPayload
 from .config import Settings
 from .db import engine
 from .jwt import JwtHandler
+from .vector_db import vector_db_client
 
 
 @lru_cache
@@ -56,3 +58,10 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+
+def get_vector_database():
+    return vector_db_client
+
+
+VectorDatabaseDep = Annotated[QdrantClient, Depends(get_vector_database)]

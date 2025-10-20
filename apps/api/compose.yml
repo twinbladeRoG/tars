@@ -30,5 +30,48 @@ services:
       - 5050:80
     env_file: .env
 
+  redis:
+    container_name: tars-redis
+    image: redis:8.2.2
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+  
+  redis-commander:
+    container_name: tars-redis-commander
+    image: ghcr.io/joeferner/redis-commander:latest
+    restart: always
+    depends_on:
+      - redis
+    environment:
+    - REDIS_HOSTS=local:redis:6379
+    ports:
+    - "8082:8081"
+    user: redis
+
+  
+  qdrant:
+    container_name: tars-qdrant
+    image: qdrant/qdrant:latest
+    restart: always
+    ports:
+      - 6333:6333
+      - 6334:6334
+    expose:
+      - 6333
+      - 6334
+      - 6335
+    volumes:
+      - qdrant_data:/qdrant/storage
+
 volumes:
   pgdata:
+  redis_data:
+    driver: local
+  qdrant_data:
+    driver: local

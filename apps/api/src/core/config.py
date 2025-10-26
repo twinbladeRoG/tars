@@ -9,6 +9,7 @@ from pydantic import (
     computed_field,
     model_validator,
 )
+from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Self
 
@@ -22,6 +23,12 @@ def parse_cors(v: Any) -> list[str] | str:
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file="./.env",
+        env_ignore_empty=True,
+        extra="ignore",
+    )
+
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
     SECRET_KEY: str = "change_this"
@@ -53,6 +60,19 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
+    @computed_field
+    @property
+    def CELERY_BACKEND_URI(self) -> str:
+        uri = MultiHostUrl.build(
+            scheme="db+postgresql",
+            username=self.POSTGRES_USER,
+            password=self.POSTGRES_PASSWORD,
+            host=self.POSTGRES_SERVER,
+            port=self.POSTGRES_PORT,
+            path="celery",
+        )
+        return str(uri)
+
     LOCAL_LLM_HOST: str = "http://localhost:8090"
     LOCAL_LLM_SECRET: SecretStr = SecretStr("sk-no-key-required")
 
@@ -63,12 +83,6 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379"
 
     LOG_LEVEL: Literal["INFO", "DEBUG", "ERROR", "WARNING", "CRITICAL"] = "INFO"
-
-    model_config = SettingsConfigDict(
-        env_file="./.env",
-        env_ignore_empty=True,
-        extra="ignore",
-    )
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "change_this":

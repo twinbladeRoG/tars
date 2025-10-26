@@ -1,9 +1,10 @@
 from typing import Any, Generic, Literal, Optional, Sequence, Type, TypeVar, overload
 
 from sqlalchemy.exc import IntegrityError, NoResultFound
-from sqlmodel import Session, select
+from sqlmodel import Session, func, select
 
 from src.core.exception import BadRequestException, NotFoundException
+from src.core.logger import logger
 from src.models.mixins import BaseModelMixin
 
 ModelType = TypeVar("ModelType", bound=BaseModelMixin)
@@ -16,19 +17,21 @@ class BaseRepository(Generic[ModelType]):
 
     def create(self, attributes: Optional[dict[str, Any]] = None) -> ModelType:
         attributes = attributes or {}
-        model = self.model_class(**attributes)
 
         try:
-            model = self.model_class.model_validate(model)
+            model = self.model_class.model_validate(attributes)
             self.session.add(model)
             self.session.commit()
+            self.session.refresh(model)
             return model
-        except IntegrityError:
+        except IntegrityError as e:
+            logger.error(e._message)
             raise BadRequestException(
                 f"Cannot create {self.model_class.__name__}",
                 error_code="IntegrityError",
             )
         except Exception as e:
+            logger.error(e)
             self.session.rollback()
             raise e
 
@@ -61,7 +64,13 @@ class BaseRepository(Generic[ModelType]):
 
     def delete(self, model: ModelType) -> None:
         self.session.delete(model)
+        self.session.commit()
 
     def _query(self):
         query = select(self.model_class)
         return query
+
+    def count(self):
+        statement = select(func.count()).select_from(self.model_class)
+        count = self.session.exec(statement).one()
+        return count

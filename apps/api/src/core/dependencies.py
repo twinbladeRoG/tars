@@ -32,7 +32,7 @@ def get_database_session():
 
 SessionDep = Annotated[Session, Depends(get_database_session)]
 
-reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"/authentication/user/login")
+reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"/api/auth/login")
 
 TokenDep = Annotated[str, Depends(reusable_oauth2)]
 

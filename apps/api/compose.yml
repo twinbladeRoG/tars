@@ -54,7 +54,6 @@ services:
     - "8082:8081"
     user: redis
 
-  
   qdrant:
     container_name: tars-qdrant
     image: qdrant/qdrant:latest

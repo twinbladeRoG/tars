@@ -1,8 +1,8 @@
 """add user table
 
-Revision ID: 4723c3bba716
+Revision ID: 1fd409eefcd2
 Revises:
-Create Date: 2025-10-15 22:20:10.442186
+Create Date: 2025-10-26 01:11:23.876764
 
 """
 
@@ -14,7 +14,7 @@ import sqlmodel.sql.sqltypes
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "4723c3bba716"
+revision: str = "1fd409eefcd2"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -38,7 +38,7 @@ def upgrade() -> None:
             "last_name", sqlmodel.sql.sqltypes.AutoString(length=255), nullable=True
         ),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column("password", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.PrimaryKeyConstraint("id"),

@@ -5,8 +5,9 @@ description = "TARS - API"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "aiofiles>=25.1.0",
     "alembic>=1.16.5",
-    "celery[redis]>=5.5.3",
+    "celery[redis,sqlalchemy]>=5.5.3",
     "fastapi[standard]>=0.118.2",
     "langchain>=1.0.0",
     "langchain-deepseek>=1.0.0",
@@ -16,13 +17,17 @@ dependencies = [
     "psycopg2-binary>=2.9.10",
     "pydantic-settings>=2.11.0",
     "pyjwt>=2.10.1",
+    "pymupdf>=1.26.5",
+    "pymupdf4llm>=0.0.27",
+    "pyresparser>=1.0.6",
     "qdrant-client>=1.15.1",
+    "scapy>=2.6.1",
     "sqlmodel>=0.0.27",
     "typed-settings>=25.1.0",
 ]
 
 [dependency-groups]
-dev = ["ruff>=0.14.0"]
+dev = ["flower>=2.0.1", "ruff>=0.14.0"]
 
 
 [tool.alembic]

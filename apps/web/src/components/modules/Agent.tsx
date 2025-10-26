@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
+import { Link } from 'react-router';
 import { Icon } from '@iconify/react';
 import { ActionIcon, Divider, ScrollArea, Tabs, Tooltip } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
@@ -143,9 +144,16 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
       <div className="flex w-full flex-col overflow-y-auto">
         <div className="flex w-full items-center gap-4">
           <h1 className="font-bold">Agent Chat</h1>
+
           <Tooltip label="New Conversation">
             <ActionIcon variant="subtle" ml="auto" onClick={handleClearConversation}>
               <Icon icon="mdi:chat-plus" className="text-2xl" />
+            </ActionIcon>
+          </Tooltip>
+
+          <Tooltip label="Knowledge Base">
+            <ActionIcon variant="subtle" to="/knowledge-base" component={Link}>
+              <Icon icon="streamline-plump-color:database-flat" className="text-2xl" />
             </ActionIcon>
           </Tooltip>
         </div>

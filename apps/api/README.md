@@ -25,8 +25,8 @@ uv sync
 
 ## Dependencies
 
-| Package | Description |
-| ------- | ----------- |
+| Package                                              | Description        |
+| ---------------------------------------------------- | ------------------ |
 | [Alembic](https://alembic.sqlalchemy.org/en/latest/) | Database Migration |
 
 ## Managing Migrations using Alembic
@@ -54,7 +54,7 @@ To downgrade to beginning
 ```bash
 uv run alembic downgrade base
 ```
- 
+
 ## Running local LLM server with llama-cpp
 
 ### Start Embedding Server
@@ -71,10 +71,25 @@ uv run alembic downgrade base
 
 ## Development / Debug
 
-| Package | Description |
-| ------- | ----------- |
+| Package                                             | Description                                |
+| --------------------------------------------------- | ------------------------------------------ |
 | [Qdrant Dashboard](http://localhost:6333/dashboard) | Inspect all vector points stored in Qdrant |
-| [Redis Commander](http://localhost:8082/) | Inspect data store in redis memory |
-| [PgAdmin](http://localhost:5050/) | Admin panel for PostgresSQL DB |
-| [Adminer](http://localhost:8080/) | Simple admin panel for SQL-based Databases |
-| [Kafbat UI](http://localhost:8081/) | Admin panel you Kafka instances |
+| [Redis Commander](http://localhost:8082/)           | Inspect data store in redis memory         |
+| [PgAdmin](http://localhost:5050/)                   | Admin panel for PostgresSQL DB             |
+| [Adminer](http://localhost:8080/)                   | Simple admin panel for SQL-based Databases |
+| [Kafbat UI](http://localhost:8081/)                 | Admin panel you Kafka instances            |
+| [Flower](http://localhost:5555/)                    | Celery Flower                              |
+
+## Celery
+
+Run celery worker:
+
+```sh
+uv run celery -A src.celery.tasks worker --loglevel=INFO
+```
+
+Run celery flower:
+
+```sh
+uv run celery -A src.celery.tasks flower
+```

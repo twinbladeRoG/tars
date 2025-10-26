@@ -8,6 +8,6 @@ class CeleryTaskStatus(SQLModel):
     task_id: str
     state: str
     status: str
-    result: Any
-    retries: int | None
-    completed_at: datetime | None
+    result: Any = None
+    retries: int | None = None
+    completed_at: datetime | None = None

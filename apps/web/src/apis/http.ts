@@ -41,7 +41,7 @@ export const refreshTokens = async (): Promise<string> => {
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', `Bearer ${token}`);
 
-    const response = await fetch(getURL('/api/v1/authentication/user/refresh'), {
+    const response = await fetch(getURL('/api/auth/refresh'), {
       method: 'GET',
       headers,
     });

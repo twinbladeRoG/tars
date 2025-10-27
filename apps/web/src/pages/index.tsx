@@ -6,8 +6,13 @@ import { SmoothCursor } from '@/components/ui/smooth-cursor';
 
 const Home = () => {
   const navigate = useNavigate();
+
   const handleChat = async () => {
     await navigate('/agent');
+  };
+
+  const handleLogin = async () => {
+    await navigate('/login');
   };
 
   return (
@@ -20,7 +25,10 @@ const Home = () => {
             </span>
           </h1>
 
-          <RainbowButton onClick={handleChat}>Chat</RainbowButton>
+          <div className="flex gap-4">
+            <RainbowButton onClick={handleChat}>Chat</RainbowButton>
+            <RainbowButton onClick={handleLogin}>Login</RainbowButton>
+          </div>
         </div>
         <RetroGrid />
       </section>

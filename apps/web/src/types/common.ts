@@ -4,8 +4,6 @@ export interface IBaseEntity {
   updated_at: string;
 }
 
-export type ObjectValues<T> = T[keyof T];
-
 export interface IPagination {
   page: number;
   limit: number;

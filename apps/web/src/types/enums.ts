@@ -1,7 +1,13 @@
+export type ObjectValues<T> = T[keyof T];
+
 export const EXTRACTION_STATUS = {
-  PENDING: 'pending',
-  IN_PROGRESS: 'in_progress',
-  COMPLETED: 'completed',
-  FAILED: 'failed',
-  IN_QUEUE: 'in_queue',
+  FAILURE: 'FAILURE',
+  PENDING: 'PENDING',
+  RECEIVED: 'RECEIVED',
+  RETRY: 'RETRY',
+  REVOKED: 'REVOKED',
+  STARTED: 'STARTED',
+  SUCCESS: 'SUCCESS',
 } as const;
+
+export type ExtractionStatus = ObjectValues<typeof EXTRACTION_STATUS>;

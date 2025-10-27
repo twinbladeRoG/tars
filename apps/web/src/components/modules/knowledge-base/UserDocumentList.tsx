@@ -25,16 +25,21 @@ import dayjs from 'dayjs';
 
 import { useUserFiles } from '@/apis/queries/file-storage.queries';
 import { bytesToSize, getFileIcon } from '@/lib/utils';
-import type { IFile } from '@/types';
+import type { IFile, ITaskStatus } from '@/types';
 
-import UserDocumentAction from './UserDocumentAction';
+import UserExtractAction from './UserExtractAction';
 
 const columnHelper = createColumnHelper<IFile>();
 
-const UserDocumentList = () => {
+interface UserDocumentListProps {
+  onEnqueue?: (task: ITaskStatus) => void;
+  className?: string;
+}
+
+const UserDocumentList: React.FC<UserDocumentListProps> = ({ onEnqueue, className }) => {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 5,
   });
   const documents = useUserFiles(pagination.pageIndex, pagination.pageSize);
 
@@ -83,10 +88,10 @@ const UserDocumentList = () => {
       columnHelper.display({
         id: 'actions',
         header: () => <p className="text-center">Actions</p>,
-        cell: (info) => <UserDocumentAction document={info.row.original} />,
+        cell: (info) => <UserExtractAction document={info.row.original} onEnqueue={onEnqueue} />,
       }),
     ],
-    []
+    [onEnqueue]
   );
 
   const data = useMemo(() => documents.data?.data ?? [], [documents.data]);
@@ -107,7 +112,7 @@ const UserDocumentList = () => {
   });
 
   return (
-    <Card>
+    <Card className={className}>
       <Table>
         <Table.Thead>
           {table.getHeaderGroups().map((headerGroup) => (

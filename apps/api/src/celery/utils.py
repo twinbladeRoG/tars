@@ -6,6 +6,7 @@ from .tasks import app
 
 def get_celery_task_status(task_id: str):
     task_result = AsyncResult(task_id, app=app)
+    res = task_result._get_task_meta()
 
     if task_result.successful():
         return CeleryTaskStatus(

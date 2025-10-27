@@ -1,10 +1,8 @@
-from pathlib import Path
-
 import pymupdf
-import pymupdf4llm
 
 from celery import Celery
 from src.core.config import settings
+from src.modules.file_storage.controller import FileController
 
 app = Celery(
     __name__,
@@ -12,12 +10,14 @@ app = Celery(
     backend=settings.CELERY_BACKEND_URI,
 )
 
-DATA_PATH = Path("data")
+app.conf.task_track_started = True
+app.conf.result_extended = True
+app.conf.database_create_tables_at_setup = True
 
 
 @app.task
 def parse_document(doc_uri: str):
-    file_path = DATA_PATH / doc_uri
+    file_path = FileController._get_local_file_path(file_name=doc_uri)
 
     if not file_path.exists():
         raise Exception(f"File {doc_uri} does not exists")
@@ -28,7 +28,5 @@ def parse_document(doc_uri: str):
     result = chr(12).join(pages)
 
     doc.close()
-
-    hi = pymupdf4llm.to_markdown(file_path.resolve())
 
     return result

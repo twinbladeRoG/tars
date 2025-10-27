@@ -12,3 +12,7 @@ export interface IFileFilterQuery {
   search?: string;
   file_types?: string[];
 }
+
+export interface IEnqueueDocumentRequest {
+  file_id: string;
+}

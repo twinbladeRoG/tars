@@ -3,6 +3,7 @@ from uuid import UUID
 from qdrant_client import QdrantClient
 
 from src.celery.tasks import app as celery_app
+from src.celery.tasks import parse_document
 from src.celery.utils import get_celery_task_status
 from src.modules.file_storage.controller import FileController
 

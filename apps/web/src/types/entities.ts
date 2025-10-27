@@ -1,4 +1,5 @@
 import type { IBaseEntity } from './common';
+import type { ExtractionStatus } from './enums';
 
 export interface IAgentWorkflowEdge {
   source: string;
@@ -43,4 +44,13 @@ export interface IFile extends IBaseEntity {
   content_length: number;
   original_filename: string;
   owner_id: string;
+}
+
+export interface ITaskStatus {
+  task_id: string;
+  state: ExtractionStatus;
+  status: ExtractionStatus;
+  result?: string | null;
+  retries: number | null;
+  completed_at?: string | null;
 }

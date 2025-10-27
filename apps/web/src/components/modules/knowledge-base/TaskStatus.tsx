@@ -21,7 +21,7 @@ const TaskStatus: React.FC<TaskStatusProps> = ({ taskId }) => {
   const task = useTaskStatus(taskId);
 
   const extractionStatusColor = useMemo((): DefaultMantineColor => {
-    switch (task.data?.state) {
+    switch (task.data?.status) {
       case EXTRACTION_STATUS.FAILURE:
         return 'red';
       case EXTRACTION_STATUS.PENDING:
@@ -53,7 +53,7 @@ const TaskStatus: React.FC<TaskStatusProps> = ({ taskId }) => {
       </div>
 
       <ScrollArea h={250}>
-        <Text size="xs">{task.data?.result}</Text>
+        <Text size="xs">{task.data?.content}</Text>
       </ScrollArea>
 
       <Divider className="my-4" />

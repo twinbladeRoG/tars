@@ -25,14 +25,14 @@ import dayjs from 'dayjs';
 
 import { useUserFiles } from '@/apis/queries/file-storage.queries';
 import { bytesToSize, getFileIcon } from '@/lib/utils';
-import type { IFile, ITaskStatus } from '@/types';
+import type { IFile, IKnowledgeBaseDocument } from '@/types';
 
 import UserExtractAction from './UserExtractAction';
 
 const columnHelper = createColumnHelper<IFile>();
 
 interface UserDocumentListProps {
-  onEnqueue?: (task: ITaskStatus) => void;
+  onEnqueue?: (task: IKnowledgeBaseDocument) => void;
   className?: string;
 }
 

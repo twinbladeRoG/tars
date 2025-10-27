@@ -1,4 +1,5 @@
 from typing import Any, Generic, Literal, Optional, Sequence, Type, TypeVar, overload
+from uuid import UUID
 
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlmodel import Session, func, select
@@ -74,3 +75,28 @@ class BaseRepository(Generic[ModelType]):
         statement = select(func.count()).select_from(self.model_class)
         count = self.session.exec(statement).one()
         return count
+
+    def update(
+        self, id: UUID, attributes: Optional[dict[str, Any]] = None
+    ) -> ModelType:
+        attributes = attributes or {}
+        model = self.get_by("id", id, unique=True)
+
+        try:
+            for key, value in attributes.items():
+                setattr(model, key, value)
+
+            self.session.add(model)
+            self.session.commit()
+            self.session.refresh(model)
+            return model
+        except IntegrityError as e:
+            logger.error(e._message)
+            raise BadRequestException(
+                f"Cannot create {self.model_class.__name__}",
+                error_code="IntegrityError",
+            )
+        except Exception as e:
+            logger.error(e)
+            self.session.rollback()
+            raise e

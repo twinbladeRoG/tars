@@ -54,3 +54,10 @@ export interface ITaskStatus {
   retries: number | null;
   completed_at?: string | null;
 }
+
+export interface IKnowledgeBaseDocument extends IBaseEntity {
+  file_id: string;
+  status?: ExtractionStatus | null;
+  task_id?: string | null;
+  content?: string | null;
+}

@@ -4,11 +4,11 @@ import { ActionIcon } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 
 import { useEnqueueDocument } from '@/apis/queries/knowledge-base.queries';
-import type { IFile, ITaskStatus } from '@/types';
+import type { IFile, IKnowledgeBaseDocument } from '@/types';
 
 interface UserExtractActionProps {
   document: IFile;
-  onEnqueue?: (task: ITaskStatus) => void;
+  onEnqueue?: (task: IKnowledgeBaseDocument) => void;
 }
 
 const UserExtractAction: React.FC<UserExtractActionProps> = ({ document, onEnqueue }) => {

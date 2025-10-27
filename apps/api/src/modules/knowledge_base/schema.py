@@ -1,5 +1,7 @@
+from uuid import UUID
+
 from sqlmodel import SQLModel
 
 
 class DocumentExtractionRequest(SQLModel):
-    file_name: str
+    file_id: UUID

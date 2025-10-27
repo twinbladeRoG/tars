@@ -31,7 +31,7 @@ import UserDocumentAction from './UserDocumentAction';
 
 const columnHelper = createColumnHelper<IFile>();
 
-const UserDocuments = () => {
+const UserDocumentList = () => {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -195,4 +195,4 @@ const UserDocuments = () => {
   );
 };
 
-export default UserDocuments;
+export default UserDocumentList;

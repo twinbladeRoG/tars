@@ -4,6 +4,7 @@ from uuid import UUID, uuid4
 
 import aiofiles
 from fastapi import UploadFile
+from sqlmodel import func, select
 
 from src.core.controller.base import BaseController
 from src.core.exception import BadRequestException, NotFoundException
@@ -29,16 +30,22 @@ class FileController(BaseController[File]):
 
         return file_path
 
-    def get_users_files(self, user_id: UUID, skip: int = 0, limit: int = 10):
+    def get_users_files(self, user_id: UUID, page: int = 0, limit: int = 10):
         base_statement = self.repository._query().where(
             self.model_class.owner_id == user_id
         )
-        base_statement = base_statement.order_by(File.created_at.desc())  # type: ignore
-        statement = base_statement.offset(skip).limit(limit)
+        base_statement = base_statement.order_by(File.created_at.desc(), File.id.desc())  # type: ignore
+        statement = base_statement.offset(page * limit).limit(limit)
         results = self.repository.session.exec(statement).all()
-        count = self.repository.count()
 
-        pagination = get_pagination(skip, limit, count)
+        count_statement = (
+            select(func.count())
+            .select_from(self.model_class)
+            .where(self.model_class.owner_id == user_id)
+        )
+        count = self.repository.session.exec(count_statement).one()
+
+        pagination = get_pagination(page, limit, count)
 
         return results, pagination
 

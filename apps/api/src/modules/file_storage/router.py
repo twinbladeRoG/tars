@@ -18,10 +18,10 @@ class FilePaginated(ModelPaginated[File]):
 def get_all_files(
     file_controller: FileControllerDeps,
     user: CurrentUser,
-    skip: int = 0,
+    page: int = 0,
     limit: int = 10,
 ):
-    files, pagination = file_controller.get_users_files(user.id, skip, limit)
+    files, pagination = file_controller.get_users_files(user.id, page, limit)
     return FilePaginated(data=list(files), pagination=pagination)
 
 

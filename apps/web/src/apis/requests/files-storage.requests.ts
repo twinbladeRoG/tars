@@ -6,7 +6,7 @@ import http from '../http';
 
 export const getUsersFiles = async (page = 0, limit = 10, filter?: IFileFilterQuery) => {
   const params = new URLSearchParams({
-    skip: String(page),
+    page: String(page),
     limit: String(limit),
   });
 

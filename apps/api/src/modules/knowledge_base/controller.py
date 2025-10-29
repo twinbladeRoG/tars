@@ -24,7 +24,7 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
     def enqueue_document(self, *, document: File):
         knowledge_base_document = self.repository.upsert_by_file(document.id)
 
-        task = parse_document.delay(document.filename)  # type: ignore
+        task = parse_document.delay(document.filename, document.id)  # type: ignore
         result = get_celery_task_status(task_id=task.id)
 
         knowledge_base_document = self.repository.update(

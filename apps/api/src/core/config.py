@@ -76,6 +76,10 @@ class Settings(BaseSettings):
     LOCAL_LLM_HOST: str = "http://localhost:8090"
     LOCAL_LLM_SECRET: SecretStr = SecretStr("sk-no-key-required")
 
+    EMBEDDING_MODEL_NAME: str = "bge-large-en-v1.5_fp32"
+    EMBEDDING_MODEL_HOST: str = "http://localhost:9090"
+    EMBEDDING_MODEL_SECRET: SecretStr = SecretStr("sk-no-key-required")
+
     OPEN_API_KEY: SecretStr = SecretStr("sk-no-key-required")
 
     VECTOR_DB_URL: str = "http://localhost:6333"

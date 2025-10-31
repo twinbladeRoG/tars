@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 
 import aiofiles
 from fastapi import UploadFile
-from sqlmodel import func, select
+from sqlmodel import col, func, select
 
 from src.core.controller.base import BaseController
 from src.core.exception import BadRequestException, NotFoundException
@@ -59,6 +59,14 @@ class FileController(BaseController[File]):
             raise NotFoundException(f"No file found with id: {id}")
 
         return result
+
+    def get_files_by_id(self, ids: list[UUID], user_id: UUID) -> list[File]:
+        base_statement = self.repository._query().where(
+            col(File.id).in_(ids), File.owner_id == user_id
+        )
+        result = self.repository.session.exec(base_statement).all()
+
+        return list(result)
 
     async def upload(self, user_id: UUID, file: UploadFile):
         if file.filename is None:

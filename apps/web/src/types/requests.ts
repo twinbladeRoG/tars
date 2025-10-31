@@ -16,3 +16,7 @@ export interface IFileFilterQuery {
 export interface IEnqueueDocumentRequest {
   file_id: string;
 }
+
+export interface IIngestDocumentsRequest {
+  documents: string[];
+}

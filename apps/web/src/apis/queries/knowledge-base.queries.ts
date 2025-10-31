@@ -1,8 +1,12 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import type { IEnqueueDocumentRequest } from '@/types';
+import type { IEnqueueDocumentRequest, IIngestDocumentsRequest } from '@/types';
 
-import { enqueueDocument, getTaskStatus } from '../requests/knowledge-base.requests';
+import {
+  enqueueDocument,
+  getTaskStatus,
+  ingestDocuments,
+} from '../requests/knowledge-base.requests';
 
 export const useEnqueueDocument = () => {
   return useMutation({
@@ -21,3 +25,12 @@ export const useTaskStatus = (taskId: string) =>
       return res;
     },
   });
+
+export const useIngestDocuments = () => {
+  return useMutation({
+    mutationFn: async (data: IIngestDocumentsRequest) => {
+      const res = await ingestDocuments(data);
+      return res;
+    },
+  });
+};

@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import { Icon } from '@iconify/react';
 import {
   Anchor,
+  Button,
   Card,
   Checkbox,
   Divider,
@@ -34,9 +35,16 @@ const columnHelper = createColumnHelper<IFile>();
 interface UserDocumentListProps {
   onEnqueue?: (task: IKnowledgeBaseDocument) => void;
   className?: string;
+  onIngest?: (documentIds: string[]) => void;
+  isIngesting?: boolean;
 }
 
-const UserDocumentList: React.FC<UserDocumentListProps> = ({ onEnqueue, className }) => {
+const UserDocumentList: React.FC<UserDocumentListProps> = ({
+  onEnqueue,
+  className,
+  onIngest,
+  isIngesting,
+}) => {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 5,
@@ -111,8 +119,24 @@ const UserDocumentList: React.FC<UserDocumentListProps> = ({ onEnqueue, classNam
     manualPagination: true,
   });
 
+  const handleIngest = () => {
+    onIngest?.(Object.keys(rowSelection));
+  };
+
   return (
     <Card className={className}>
+      <div className="flex items-center justify-end">
+        <Button
+          size="xs"
+          onClick={handleIngest}
+          loading={isIngesting}
+          disabled={Object.keys(rowSelection).length === 0}>
+          Ingest
+        </Button>
+      </div>
+
+      <Divider className="my-4" />
+
       <Table>
         <Table.Thead>
           {table.getHeaderGroups().map((headerGroup) => (

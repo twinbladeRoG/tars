@@ -7,6 +7,7 @@ import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event
 import { ReactFlowProvider } from '@xyflow/react';
 import { v4 as uuid } from 'uuid';
 
+import { getToken } from '@/apis/http';
 import { useAgentWorkflow } from '@/apis/queries/agent.queries';
 import { cn } from '@/lib/utils';
 
@@ -69,6 +70,7 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${await getToken()}`,
       },
       body: JSON.stringify({
         message: messageToSent,

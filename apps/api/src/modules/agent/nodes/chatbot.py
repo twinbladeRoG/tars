@@ -1,3 +1,5 @@
+from langchain.messages import SystemMessage
+
 from src.modules.llm_models.model import LlmModelFactory
 
 from ..state import AgentState
@@ -10,5 +12,20 @@ class ChatBotNode:
         self.llm = self.llm.bind_tools([])
 
     def __call__(self, state: AgentState):
-        response = self.llm.invoke(state["messages"])
+        results = state["retrieved_points"]
+        retrieved_texts = ""
+
+        if results is not None:
+            for point in results:
+                if point.payload:
+                    retrieved_texts += "\n" + point.payload["text"]
+
+        system_prompt = f"""
+        <Retrieved Results>
+        {retrieved_texts}
+        """
+
+        response = self.llm.invoke(
+            [SystemMessage(content=system_prompt)] + state["messages"]
+        )
         return {"messages": [response]}

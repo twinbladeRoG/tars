@@ -13,3 +13,7 @@ class KnowledgeBaseDocumentBase(SQLModel):
     status: Optional[str] = Field(default=None)
     content: Optional[str] = Field(default=None)
     task_id: Optional[str] = Field(default=None)
+
+
+class IngestDocumentRequest(SQLModel):
+    documents: list[UUID]

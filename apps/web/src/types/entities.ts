@@ -61,3 +61,7 @@ export interface IKnowledgeBaseDocument extends IBaseEntity {
   task_id?: string | null;
   content?: string | null;
 }
+
+export interface IKnowledgeBaseDocumentWithFile extends IKnowledgeBaseDocument {
+  file: IFile;
+}

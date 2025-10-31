@@ -1,8 +1,10 @@
+from uuid import UUID
+
 from fastapi import APIRouter
 
 from src.core.dependencies import CurrentUser
 from src.core.factory.factory import FileControllerDeps, KnowledgeBaseControllerDeps
-from src.models.models import KnowledgeBaseDocument
+from src.models.models import KnowledgeBaseDocument, KnowledgeBaseDocumentWithFile
 
 from .schema import DocumentExtractionRequest, IngestDocumentRequest
 
@@ -37,3 +39,21 @@ def ingest(
 ):
     documents = file_controller.get_files_by_id(ids=body.documents, user_id=user.id)
     return knowledge_base_controller.ingest_documents(user, documents)
+
+
+@router.get("/", response_model=list[KnowledgeBaseDocumentWithFile])
+def get_knowledge_bases(
+    user: CurrentUser, knowledge_base_controller: KnowledgeBaseControllerDeps
+):
+    documents = knowledge_base_controller.get_user_knowledge_base_documents(user)
+    return documents
+
+
+@router.delete("/{document_id}")
+def remove_knowledge_base(
+    user: CurrentUser,
+    document_id: UUID,
+    knowledge_base_controller: KnowledgeBaseControllerDeps,
+):
+    knowledge_base_controller.remove_knowledge_base_document(document_id, user)
+    return None

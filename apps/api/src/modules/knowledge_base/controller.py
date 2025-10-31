@@ -1,4 +1,4 @@
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from qdrant_client import QdrantClient
@@ -144,12 +144,11 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
 
         return results.count
 
-    def _remove_document_from_vector_store(
-        self, document_id: str, collection_name: str
-    ):
+    def _remove_document_from_vector_db(self, document_id: str, collection_name: str):
         count = self._get_count_of_points_from_collection(document_id, collection_name)
 
         if count == 0:
+            logger.debug(f"No points found for document: {document_id}")
             return
 
         result = self.vector_db.delete(
@@ -169,3 +168,23 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
         )
 
         return result.status
+
+    def get_user_knowledge_base_documents(self, user: User):
+        statement = (
+            self.repository._query()
+            .join(self.model_class.file)  # type: ignore
+            .join(File.owner)  # type: ignore
+            .where(User.id == user.id)
+        )
+
+        results = self.repository.session.exec(statement).all()
+        return list(results)
+
+    def remove_knowledge_base_document(self, document_id: UUID, user: User):
+        document = self.get_by_id(document_id)
+        self._remove_document_from_vector_db(
+            document_id=str(document_id),
+            collection_name=self._get_collection_name(user),
+        )
+
+        self.repository.delete(document)

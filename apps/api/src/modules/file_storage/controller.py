@@ -107,10 +107,11 @@ class FileController(BaseController[File]):
         document = self.get_file_by_id(id, user_id)
         file_path = self._get_local_file_path(document.filename)
 
+        self.repository.delete(document)
+
         if not file_path.exists():
             raise NotFoundException("Document does not exists")
 
         os.remove(file_path)
-        self.repository.delete(document)
 
         return document

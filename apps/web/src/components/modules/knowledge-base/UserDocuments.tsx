@@ -1,4 +1,4 @@
-'use no memo'; // HOTFIX for TanStack Table with React Compiler - https://github.com/TanStack/table/issues/5567#issuecomment-2442997182
+'use no memo'; // !HOTFIX for TanStack Table with React Compiler - https://github.com/TanStack/table/issues/5567#issuecomment-2442997182
 
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router';

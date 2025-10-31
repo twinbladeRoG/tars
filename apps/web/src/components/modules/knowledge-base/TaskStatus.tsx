@@ -11,38 +11,22 @@ import {
 } from '@mantine/core';
 
 import { useTaskStatus } from '@/apis/queries/knowledge-base.queries';
-import { EXTRACTION_STATUS } from '@/types';
+import { getExtractionStatusColor } from '@/lib/utils';
 
 interface TaskStatusProps {
   taskId: string;
+  className?: string;
 }
 
-const TaskStatus: React.FC<TaskStatusProps> = ({ taskId }) => {
+const TaskStatus: React.FC<TaskStatusProps> = ({ taskId, className }) => {
   const task = useTaskStatus(taskId);
 
   const extractionStatusColor = useMemo((): DefaultMantineColor => {
-    switch (task.data?.status) {
-      case EXTRACTION_STATUS.FAILURE:
-        return 'red';
-      case EXTRACTION_STATUS.PENDING:
-        return 'yellow';
-      case EXTRACTION_STATUS.RECEIVED:
-        return 'green';
-      case EXTRACTION_STATUS.RETRY:
-        return 'orange';
-      case EXTRACTION_STATUS.REVOKED:
-        return 'red';
-      case EXTRACTION_STATUS.STARTED:
-        return 'green';
-      case EXTRACTION_STATUS.SUCCESS:
-        return 'green';
-      default:
-        return 'gray';
-    }
+    return getExtractionStatusColor(task.data?.status);
   }, [task.data]);
 
   return (
-    <Card>
+    <Card className={className}>
       <p className="mb-3">Task: {task.data?.task_id}</p>
       <div className="mb-7 flex items-center justify-between gap-4">
         <Badge color={extractionStatusColor}>{task.data?.status}</Badge>

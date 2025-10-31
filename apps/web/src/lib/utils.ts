@@ -1,6 +1,9 @@
+import type { DefaultMantineColor } from '@mantine/core';
 import { MIME_TYPES } from '@mantine/dropzone';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+
+import { EXTRACTION_STATUS, type ExtractionStatus } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -41,5 +44,26 @@ export const getFileIcon = (type: string) => {
       return 'mdi:file-excel';
     default:
       return 'mdi:file-document';
+  }
+};
+
+export const getExtractionStatusColor = (status?: ExtractionStatus | null): DefaultMantineColor => {
+  switch (status) {
+    case EXTRACTION_STATUS.FAILURE:
+      return 'red';
+    case EXTRACTION_STATUS.PENDING:
+      return 'yellow';
+    case EXTRACTION_STATUS.RECEIVED:
+      return 'green';
+    case EXTRACTION_STATUS.RETRY:
+      return 'orange';
+    case EXTRACTION_STATUS.REVOKED:
+      return 'red';
+    case EXTRACTION_STATUS.STARTED:
+      return 'green';
+    case EXTRACTION_STATUS.SUCCESS:
+      return 'green';
+    default:
+      return 'gray';
   }
 };

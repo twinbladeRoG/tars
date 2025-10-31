@@ -87,6 +87,7 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379"
 
     LOG_LEVEL: Literal["INFO", "DEBUG", "ERROR", "WARNING", "CRITICAL"] = "INFO"
+    SHOW_DB_LOGS: bool = True
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "change_this":

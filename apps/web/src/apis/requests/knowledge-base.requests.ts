@@ -2,6 +2,7 @@ import type {
   IEnqueueDocumentRequest,
   IIngestDocumentsRequest,
   IKnowledgeBaseDocument,
+  IKnowledgeBaseDocumentWithFile,
 } from '@/types';
 
 import http from '../http';
@@ -14,3 +15,8 @@ export const getTaskStatus = (taskId: string) =>
 
 export const ingestDocuments = (payload: IIngestDocumentsRequest) =>
   http.post<unknown>('/api/knowledge-base/ingest', payload);
+
+export const getKnowledgeBases = () =>
+  http.get<Array<IKnowledgeBaseDocumentWithFile>>('/api/knowledge-base/');
+
+export const removeKnowledgeBase = (id: string) => http.delete<null>(`/api/knowledge-base/${id}`);

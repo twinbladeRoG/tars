@@ -38,3 +38,7 @@ class File(BaseModelMixin, FileBase, table=True):
 class KnowledgeBaseDocument(BaseModelMixin, KnowledgeBaseDocumentBase, table=True):
     file_id: UUID = Field(foreign_key="file.id", nullable=False, unique=True)
     file: File = Relationship(back_populates="knowledge_base_document")
+
+
+class KnowledgeBaseDocumentWithFile(BaseModelMixin, KnowledgeBaseDocumentBase):
+    file: File

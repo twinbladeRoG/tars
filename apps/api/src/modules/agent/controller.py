@@ -1,7 +1,8 @@
-from typing import Any, Optional
+from typing import Optional
 from uuid import UUID
 
 from src.models.models import User
+from src.modules.file_storage.controller import FileController
 
 from .agent import RootAgent
 
@@ -10,11 +11,8 @@ class AgentController:
     def __init__(self) -> None:
         self.agent = RootAgent()
 
-    def __call__(self) -> Any:
-        pass
-
-    def get_workflow(self):
-        agent = self.agent.compile()
+    def get_workflow(self, file_controller: FileController):
+        agent = self.agent.compile(file_controller)
         mermaid = agent.get_graph(xray=True).draw_mermaid()
         state = agent.get_graph(xray=True).to_json()
 
@@ -24,8 +22,13 @@ class AgentController:
         self,
         user: User,
         user_message: str,
+        *,
+        file_controller: FileController,
         conversation_id: Optional[UUID | None] = None,
     ):
         return self.agent.stream(
-            user=user, user_message=user_message, conversation_id=conversation_id
+            user=user,
+            user_message=user_message,
+            conversation_id=conversation_id,
+            file_controller=file_controller,
         )

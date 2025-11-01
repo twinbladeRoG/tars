@@ -16,7 +16,7 @@ from src.celery.tasks import app as celery_app
 from src.celery.tasks import parse_document
 from src.celery.utils import get_celery_task_status
 from src.core.controller.base import BaseController
-from src.core.exception import BadRequestException
+from src.core.exception import BadRequestException, NotFoundException
 from src.core.logger import logger
 from src.models.models import File, KnowledgeBaseDocument, User
 from src.modules.llm_models.embedding import create_embedding
@@ -112,8 +112,8 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
                                 vector=embedding.embedding,
                                 payload={
                                     "text": text,
-                                    "file_id": doc.id,
-                                    "knowledge_base_document_id": doc.knowledge_base_document.id,
+                                    "file_id": doc.id.hex,
+                                    "knowledge_base_document_id": doc.knowledge_base_document.id.hex,
                                 },
                             )
                         ],
@@ -188,3 +188,19 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
         )
 
         self.repository.delete(document)
+
+    def get_document_by_file_id(self, user: User, file_id: UUID):
+        doc = self.repository.session.exec(
+            self.repository._query()
+            .join(self.model_class.file)  # type: ignore
+            .join(File.owner)  # type: ignore
+            .where(
+                self.model_class.file_id == file_id,
+                User.id == user.id,
+            )
+        ).one_or_none()
+
+        if doc is None:
+            raise NotFoundException(f"No document exists with file id: {file_id}")
+
+        return doc

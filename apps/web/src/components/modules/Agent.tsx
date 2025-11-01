@@ -10,7 +10,9 @@ import { v4 as uuid } from 'uuid';
 import { getToken } from '@/apis/http';
 import { useAgentWorkflow } from '@/apis/queries/agent.queries';
 import { cn } from '@/lib/utils';
+import type { IFile } from '@/types';
 
+import KnowledgeBaseDetails from './knowledge-base/KnowledgeBaseDetails';
 import AgentGraph from './AgentGraph';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
@@ -28,6 +30,7 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
   const workflow = useAgentWorkflow();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [tab, setTab] = useState<string | null>('graph');
 
   const {
     messages,
@@ -141,6 +144,13 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
     setConversationId(null);
   };
 
+  const [file, setFile] = useState<IFile | null>(null);
+
+  const handleSelectCitation = (file: IFile) => {
+    setFile(file);
+    setTab('citations');
+  };
+
   return (
     <section className={cn(className, 'grid grid-cols-[1fr_380px] gap-4')}>
       <div className="flex w-full flex-col overflow-y-auto">
@@ -165,7 +175,7 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
         <ScrollArea.Autosize offsetScrollbars viewportRef={scrollRef} className="mb-4">
           <div className="flex flex-col gap-y-3">
             {messages.map((message) => (
-              <ChatMessage key={message.id} {...message} />
+              <ChatMessage key={message.id} {...message} onClickCitation={handleSelectCitation} />
             ))}
           </div>
         </ScrollArea.Autosize>
@@ -174,11 +184,12 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
       </div>
 
       <Tabs
-        defaultValue="graph"
+        value={tab}
+        onChange={setTab}
         keepMounted={false}
         classNames={{
-          root: '!flex !flex-col',
-          panel: '!grow h-full flex flex-col',
+          root: '!flex !flex-col !min-h-0',
+          panel: '!grow h-full flex flex-col overflow-auto',
         }}>
         <Tabs.List>
           <Tabs.Tab value="graph">Graph</Tabs.Tab>
@@ -197,6 +208,10 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
           <div className="rounded-2xl border border-amber-400 bg-amber-50/20 py-7">
             {workflow.data?.mermaid ? <Mermaid>{workflow.data.mermaid}</Mermaid> : null}
           </div>
+        </Tabs.Panel>
+
+        <Tabs.Panel value="citations" className="p-4">
+          {file ? <KnowledgeBaseDetails className="" file={file} /> : null}
         </Tabs.Panel>
       </Tabs>
     </section>

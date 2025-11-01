@@ -1,5 +1,5 @@
 import React from 'react';
-import { Anchor, Code, Divider, Table, Title } from '@mantine/core';
+import { Anchor, Code, Divider, Table, Text, Title } from '@mantine/core';
 import { ReactRenderer } from 'marked-react';
 
 const renderer = {
@@ -47,6 +47,9 @@ const renderer = {
   },
   hr() {
     return <Divider my="lg" />;
+  },
+  paragraph(text) {
+    return <Text size="sm">{text}</Text>;
   },
 } satisfies Partial<ReactRenderer>;
 

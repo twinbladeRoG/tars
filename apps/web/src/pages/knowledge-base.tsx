@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Title } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 
 import { useIngestDocuments } from '@/apis/queries/knowledge-base.queries';
@@ -29,10 +28,6 @@ const KnowledgeBasePage = () => {
 
   return (
     <div>
-      <Title order={4} mb="md">
-        Documents
-      </Title>
-
       <UserDocumentList
         className="mb-4"
         onEnqueue={setTask}

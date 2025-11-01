@@ -1,3 +1,5 @@
+import type { IFile } from '@/types';
+
 export interface IMessage {
   id: string;
   role: 'bot' | 'user';
@@ -6,4 +8,5 @@ export interface IMessage {
   isLoading?: boolean;
   isError?: boolean;
   isStreaming?: boolean;
+  citations?: Array<IFile>;
 }

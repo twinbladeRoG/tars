@@ -12,8 +12,11 @@ from langgraph.graph import END, START, StateGraph
 
 from src.core.logger import logger
 from src.models.models import User
+from src.modules.file_storage.controller import FileController
+from src.modules.knowledge_base.controller import KnowledgeBaseController
 
 from .nodes.chatbot import ChatBotNode
+from .nodes.citations import CitationNode
 from .nodes.retrieval import RetrievalNode
 from .state import AgentState
 
@@ -23,7 +26,7 @@ class RootAgent:
         self.memory = MemorySaver()
         self.agent = None
 
-    def compile(self):
+    def compile(self, file_controller: FileController):
         if self.agent is not None:
             logger.debug("Agent already complied")
             return self.agent
@@ -33,10 +36,12 @@ class RootAgent:
         # Add Nodes
         agent_builder.add_node("chatbot", ChatBotNode())
         agent_builder.add_node("vector_search", RetrievalNode())
+        agent_builder.add_node("citations", CitationNode(file_controller))
 
         # Add Edges
         agent_builder.add_edge(START, "vector_search")
-        agent_builder.add_edge("vector_search", "chatbot")
+        agent_builder.add_edge("vector_search", "citations")
+        agent_builder.add_edge("citations", "chatbot")
         agent_builder.add_edge("chatbot", END)
 
         agent = agent_builder.compile(checkpointer=self.memory)
@@ -48,10 +53,11 @@ class RootAgent:
         *,
         user: User,
         user_message: str,
+        file_controller: FileController,
         conversation_id: Optional[UUID | None] = None,
     ):
         try:
-            agent = self.compile()
+            agent = self.compile(file_controller)
 
             if conversation_id is None:
                 conversation_id = uuid4()
@@ -60,13 +66,19 @@ class RootAgent:
             config: RunnableConfig = {"configurable": {"thread_id": conversation_id}}
             config = RunnableConfig(
                 configurable={"thread_id": conversation_id},
-                metadata={"collection_name": f"{user.first_name}_{user.id}"},
+                metadata={
+                    "collection_name": KnowledgeBaseController._get_collection_name(
+                        user
+                    ),
+                    "user_id": user.id.hex,
+                },
             )
 
             messages: list[AnyMessage] = [HumanMessage(content=user_message)]
             agent_state: AgentState = {
                 "messages": messages,
                 "llm_calls": 0,
+                "citations": [],
                 "retrieved_points": [],
             }
 
@@ -89,6 +101,12 @@ class RootAgent:
                         yield f"event: node\ndata: {state.next[0]}\n\n"
 
                     messages = event_value.get("messages", [])
+                    citations = event_value.get("citations", None)
+
+                    if citations:
+                        yield f"event: citations\ndata: {
+                            json.dumps([c.model_dump() for c in citations], default=str)
+                        }\n\n"
 
                     if len(messages) == 0:
                         continue

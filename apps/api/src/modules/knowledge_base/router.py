@@ -37,7 +37,7 @@ def ingest(
     knowledge_base_controller: KnowledgeBaseControllerDeps,
     file_controller: FileControllerDeps,
 ):
-    documents = file_controller.get_files_by_id(ids=body.documents, user_id=user.id)
+    documents = file_controller.get_files_by_ids(ids=body.documents, user_id=user.id)
     return knowledge_base_controller.ingest_documents(user, documents)
 
 
@@ -57,3 +57,12 @@ def remove_knowledge_base(
 ):
     knowledge_base_controller.remove_knowledge_base_document(document_id, user)
     return None
+
+
+@router.get("/file/{file_id}", response_model=KnowledgeBaseDocument)
+def get_document_by_file_id(
+    user: CurrentUser,
+    file_id: UUID,
+    knowledge_base_controller: KnowledgeBaseControllerDeps,
+):
+    return knowledge_base_controller.get_document_by_file_id(user=user, file_id=file_id)

@@ -13,6 +13,7 @@ import {
   Select,
   Skeleton,
   Table,
+  Title,
 } from '@mantine/core';
 import {
   createColumnHelper,
@@ -125,15 +126,19 @@ const UserDocumentList: React.FC<UserDocumentListProps> = ({
 
   return (
     <Card className={className}>
-      <div className="flex items-center justify-end">
-        <Button
-          size="xs"
-          onClick={handleIngest}
-          loading={isIngesting}
-          disabled={Object.keys(rowSelection).length === 0}>
-          Ingest
-        </Button>
-      </div>
+      <Card.Section withBorder inheritPadding py="xs">
+        <div className="flex items-center justify-between">
+          <Title order={4}>Documents</Title>
+
+          <Button
+            size="xs"
+            onClick={handleIngest}
+            loading={isIngesting}
+            disabled={Object.keys(rowSelection).length === 0}>
+            Ingest
+          </Button>
+        </div>
+      </Card.Section>
 
       <Divider className="my-4" />
 

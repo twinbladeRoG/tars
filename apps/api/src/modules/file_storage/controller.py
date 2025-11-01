@@ -60,7 +60,7 @@ class FileController(BaseController[File]):
 
         return result
 
-    def get_files_by_id(self, ids: list[UUID], user_id: UUID) -> list[File]:
+    def get_files_by_ids(self, ids: list[UUID], user_id: UUID) -> list[File]:
         base_statement = self.repository._query().where(
             col(File.id).in_(ids), File.owner_id == user_id
         )

@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { Accordion, Loader, Skeleton } from '@mantine/core';
+import { Accordion, ActionIcon, Button, Loader, ScrollArea, Skeleton } from '@mantine/core';
+import { useClipboard } from '@mantine/hooks';
 import Markdown from 'marked-react';
 
 import { cn } from '@/lib/utils';
+import type { IFile } from '@/types';
 
 import renderer from '../markdown';
 
@@ -15,13 +17,19 @@ interface SplitMessage {
   isThinking?: boolean;
 }
 
-const ChatMessage: React.FC<IMessage> = ({
+export interface ChatMessageProps extends IMessage {
+  onClickCitation: (file: IFile) => void;
+}
+
+const ChatMessage: React.FC<ChatMessageProps> = ({
   message,
   reason,
   isError,
   isLoading,
   isStreaming,
   role,
+  citations,
+  onClickCitation,
 }) => {
   const isUser = role === 'user';
   // for reasoning model, we split the message into content and thought
@@ -63,44 +71,77 @@ const ChatMessage: React.FC<IMessage> = ({
     return { content: actualContent, thought, isThinking };
   }, [message, isUser]);
 
+  const clipboard = useClipboard({ timeout: 500 });
+
   return (
     <div
-      className={cn('max-w-[80%] rounded-lg p-4', {
-        'self-end bg-gray-900': isUser,
+      className={cn('flex max-w-[80%] flex-col', {
+        'self-end': isUser,
         'self-start': !isUser,
         'bg-red-950': isError,
         'min-w-3/4': isLoading,
       })}>
-      {isLoading ? <Skeleton height={40} /> : null}
+      <div
+        className={cn('mb-2 rounded-lg', {
+          'bg-gray-900 p-4': isUser,
+          'self-start': !isUser,
+          'bg-red-950': isError,
+          'min-w-3/4': isLoading,
+        })}>
+        {isLoading ? <Skeleton height={40} /> : null}
 
-      {!isLoading && !isUser && (reason || thought) ? (
-        <Accordion
-          defaultValue={null}
-          mb="md"
-          classNames={{
-            label: '!py-2',
-          }}>
-          <Accordion.Item value="thought">
-            <Accordion.Control icon={<Icon icon="mdi:thought-bubble" />}>
-              Thought {isThinking ? <Loader /> : null}
-            </Accordion.Control>
-            <Accordion.Panel className="">
-              {reason ? <Markdown renderer={renderer}>{reason}</Markdown> : null}
-              {thought ? <Markdown renderer={renderer}>{thought}</Markdown> : null}
-            </Accordion.Panel>
-          </Accordion.Item>
-        </Accordion>
-      ) : null}
+        {!isLoading && !isUser && (reason || thought) ? (
+          <Accordion
+            defaultValue={null}
+            mb="md"
+            classNames={{
+              label: '!py-2',
+            }}>
+            <Accordion.Item value="thought">
+              <Accordion.Control icon={<Icon icon="mdi:thought-bubble" />}>
+                Thought {isThinking ? <Loader /> : null}
+              </Accordion.Control>
+              <Accordion.Panel className="">
+                {reason ? <Markdown renderer={renderer}>{reason}</Markdown> : null}
+                {thought ? <Markdown renderer={renderer}>{thought}</Markdown> : null}
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
+        ) : null}
 
-      <Markdown renderer={renderer}>{content}</Markdown>
+        <Markdown renderer={renderer}>{content}</Markdown>
 
-      {isStreaming && !isUser ? (
-        <div className="mt-2">
-          <Skeleton height={16} radius="sm" />
-          <Skeleton height={16} mt={12} radius="sm" />
-          <Skeleton height={16} mt={12} width="70%" radius="sm" />
-        </div>
-      ) : null}
+        {isStreaming && !isUser ? (
+          <div className="mt-2">
+            <Skeleton height={16} radius="sm" />
+            <Skeleton height={16} mt={12} radius="sm" />
+            <Skeleton height={16} mt={12} width="70%" radius="sm" />
+          </div>
+        ) : null}
+
+        <ScrollArea.Autosize mah={300} mt="md">
+          <div className="flex">
+            {citations?.map((citation) => (
+              <Button
+                key={citation.id}
+                mr="md"
+                variant="light"
+                onClick={() => onClickCitation(citation)}>
+                <p className="whitespace-nowrap">{citation.original_filename}</p>
+              </Button>
+            ))}
+          </div>
+        </ScrollArea.Autosize>
+      </div>
+
+      <ActionIcon
+        disabled={isLoading || isStreaming}
+        className={isUser ? 'self-end' : 'self-start'}
+        variant="subtle"
+        color={clipboard.copied ? 'teal' : 'blue'}
+        onClick={() => clipboard.copy(content)}>
+        <Icon icon={clipboard.copied ? 'mdi:check' : 'mdi:content-copy'} />
+      </ActionIcon>
     </div>
   );
 };

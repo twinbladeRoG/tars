@@ -2,7 +2,11 @@ from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
 from src.core.dependencies import CurrentUser
-from src.core.factory.factory import AgentControllerDeps, FileControllerDeps
+from src.core.factory.factory import (
+    AgentControllerDeps,
+    CandidateControllerDeps,
+    FileControllerDeps,
+)
 
 from .schema import AgentChatRequest, AgentWorkflowResponse
 
@@ -14,8 +18,11 @@ def get_agent(
     user: CurrentUser,
     agent_controller: AgentControllerDeps,
     file_controller: FileControllerDeps,
+    candidate_controller: CandidateControllerDeps,
 ):
-    state, mermaid = agent_controller.get_workflow(file_controller)
+    state, mermaid = agent_controller.get_workflow(
+        file_controller=file_controller, candidate_controller=candidate_controller
+    )
     return AgentWorkflowResponse(mermaid=mermaid, state=state)
 
 
@@ -25,6 +32,7 @@ def chat(
     body: AgentChatRequest,
     agent_controller: AgentControllerDeps,
     file_controller: FileControllerDeps,
+    candidate_controller: CandidateControllerDeps,
 ):
     return StreamingResponse(
         agent_controller.stream(
@@ -32,6 +40,7 @@ def chat(
             conversation_id=body.conversation_id,
             user_message=body.message,
             file_controller=file_controller,
+            candidate_controller=candidate_controller,
         ),
         headers={
             "Cache-Control": "no-cache",

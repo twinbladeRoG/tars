@@ -66,3 +66,12 @@ def get_document_by_file_id(
     knowledge_base_controller: KnowledgeBaseControllerDeps,
 ):
     return knowledge_base_controller.get_document_by_file_id(user=user, file_id=file_id)
+
+
+@router.get("/{id}", response_model=KnowledgeBaseDocument)
+def get_document_by_id(
+    user: CurrentUser,
+    id: UUID,
+    knowledge_base_controller: KnowledgeBaseControllerDeps,
+):
+    return knowledge_base_controller.get_document_by_id(user=user, id=id)

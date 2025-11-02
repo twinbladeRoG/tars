@@ -5,11 +5,16 @@ import pymupdf
 from celery import Celery
 from src.core.config import settings
 from src.core.dependencies import get_database_session
+from src.core.exception import BadRequestException, NotFoundException
 from src.core.vector_db import vector_db_client
-from src.models.models import KnowledgeBaseDocument, User
+from src.models.models import Candidate, KnowledgeBaseDocument, User
+from src.modules.candidate.controller import CandidateController
+from src.modules.candidate.repository import CandidateRepository
+from src.modules.candidate.schema import CandidateCreate
 from src.modules.file_storage.controller import FileController
 from src.modules.users.controller import UserController
 from src.modules.users.repository import UserRepository
+from src.utils.resume_parser import ResumeParser
 
 app = Celery(
     __name__,
@@ -79,4 +84,56 @@ def store_embeddings(content: str, file_id: UUID, user_id: UUID):
 
     knowledge_base_controller.ingest_documents(user=user, files=[document.file])
 
-    return None
+    return document.id.hex
+
+
+@app.task(name="create_candidate")
+def create_candidate(knowledge_base_document_id: UUID):
+    from src.modules.knowledge_base.controller import KnowledgeBaseController
+    from src.modules.knowledge_base.repository import KnowledgeBaseDocumentRepository
+
+    knowledge_base_controller = KnowledgeBaseController(
+        repository=KnowledgeBaseDocumentRepository(
+            model=KnowledgeBaseDocument, session=session
+        ),
+        vector_db=vector_db_client,
+    )
+    document = knowledge_base_controller.get_by_id(knowledge_base_document_id)
+    content = document.content
+
+    if content is None:
+        raise BadRequestException(
+            f"Knowledge base document {knowledge_base_document_id} does not have any content."
+        )
+
+    email = ResumeParser.extract_email_from_resume(content)
+    name = ResumeParser.extract_name(content)
+    contact = ResumeParser.extract_contact_number_from_resume(content)
+
+    if email is None:
+        raise NotFoundException(
+            f"Email for found for Knowledge base: {knowledge_base_document_id}"
+        )
+
+    if name is None:
+        raise NotFoundException(
+            f"Name for found for Knowledge base: {knowledge_base_document_id}"
+        )
+
+    candidate_controller = CandidateController(
+        repository=CandidateRepository(model=Candidate, session=session)
+    )
+
+    candidate = CandidateCreate(
+        email=email,
+        name=name,
+        contact=contact,
+        skills=[],
+        certifications=[],
+        experiences=[],
+        knowledge_base_document_id=knowledge_base_document_id,
+    )
+
+    candidate = candidate_controller.create(candidate)
+
+    return candidate.model_dump_json()

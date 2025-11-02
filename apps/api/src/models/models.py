@@ -5,6 +5,7 @@ from pydantic import field_validator
 from sqlmodel import Field, Relationship
 
 from src.core.security import PasswordHandler
+from src.modules.candidate.schema import CandidateBase
 from src.modules.file_storage.schema import FileBase
 from src.modules.knowledge_base.schema import KnowledgeBaseDocumentBase
 from src.modules.users.schema import UserBase
@@ -39,6 +40,27 @@ class KnowledgeBaseDocument(BaseModelMixin, KnowledgeBaseDocumentBase, table=Tru
     file_id: UUID = Field(foreign_key="file.id", nullable=False, unique=True)
     file: File = Relationship(back_populates="knowledge_base_document")
 
+    candidate: Optional["Candidate"] = Relationship(
+        back_populates="knowledge_base_document", cascade_delete=True
+    )
+
 
 class KnowledgeBaseDocumentWithFile(BaseModelMixin, KnowledgeBaseDocumentBase):
     file: File
+
+
+class Candidate(BaseModelMixin, CandidateBase, table=True):
+    knowledge_base_document_id: UUID = Field(
+        foreign_key="knowledgebasedocument.id",
+        nullable=False,
+        unique=True,
+        ondelete="CASCADE",
+    )
+    knowledge_base_document: KnowledgeBaseDocument = Relationship(
+        back_populates="candidate"
+    )
+
+
+class CandidateWithKnowledgeBase(BaseModelMixin, KnowledgeBaseDocumentBase):
+    knowledge_base_document_id: UUID
+    knowledge_base_document: KnowledgeBaseDocument

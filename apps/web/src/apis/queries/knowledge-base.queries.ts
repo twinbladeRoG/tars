@@ -5,6 +5,7 @@ import type { IEnqueueDocumentRequest, IIngestDocumentsRequest } from '@/types';
 import {
   enqueueDocument,
   getKnowledgeBaseByFileId,
+  getKnowledgeBaseById,
   getKnowledgeBases,
   getTaskStatus,
   ingestDocuments,
@@ -72,4 +73,14 @@ export const useKnowledgeBaseByFileId = (id: string) =>
       const res = await getKnowledgeBaseByFileId(id);
       return res;
     },
+  });
+
+export const useKnowledgeBase = (id: string) =>
+  useQuery({
+    queryKey: ['knowledge-base', id],
+    queryFn: async () => {
+      const res = await getKnowledgeBaseById(id);
+      return res;
+    },
+    enabled: !!id,
   });

@@ -1,4 +1,4 @@
-import type { IFile } from '@/types';
+import type { ICandidate, IFile } from '@/types';
 
 export interface IMessage {
   id: string;
@@ -9,4 +9,5 @@ export interface IMessage {
   isError?: boolean;
   isStreaming?: boolean;
   citations?: Array<IFile>;
+  candidates?: Array<ICandidate>;
 }

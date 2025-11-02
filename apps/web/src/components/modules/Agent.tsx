@@ -10,8 +10,9 @@ import { v4 as uuid } from 'uuid';
 import { getToken } from '@/apis/http';
 import { useAgentWorkflow } from '@/apis/queries/agent.queries';
 import { cn } from '@/lib/utils';
-import type { IFile } from '@/types';
+import type { ICandidate, IFile } from '@/types';
 
+import CandidateDetails from './candidate/CandidateDetails';
 import KnowledgeBaseDetails from './knowledge-base/KnowledgeBaseDetails';
 import AgentGraph from './AgentGraph';
 import ChatInput from './ChatInput';
@@ -145,10 +146,16 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
   };
 
   const [file, setFile] = useState<IFile | null>(null);
+  const [candidate, setCandidate] = useState<ICandidate | null>(null);
 
   const handleSelectCitation = (file: IFile) => {
     setFile(file);
     setTab('citations');
+  };
+
+  const handleSelectCandidate = (candidate: ICandidate) => {
+    setCandidate(candidate);
+    setTab('candidate');
   };
 
   return (
@@ -175,7 +182,12 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
         <ScrollArea.Autosize offsetScrollbars viewportRef={scrollRef} className="mb-4">
           <div className="flex flex-col gap-y-3">
             {messages.map((message) => (
-              <ChatMessage key={message.id} {...message} onClickCitation={handleSelectCitation} />
+              <ChatMessage
+                key={message.id}
+                {...message}
+                onClickCandidate={handleSelectCandidate}
+                onClickCitation={handleSelectCitation}
+              />
             ))}
           </div>
         </ScrollArea.Autosize>
@@ -212,6 +224,10 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
 
         <Tabs.Panel value="citations" className="p-4">
           {file ? <KnowledgeBaseDetails className="" file={file} /> : null}
+        </Tabs.Panel>
+
+        <Tabs.Panel value="candidate" className="p-4">
+          {candidate ? <CandidateDetails className="" candidate={candidate} /> : null}
         </Tabs.Panel>
       </Tabs>
     </section>

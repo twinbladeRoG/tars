@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { type EventSourceMessage } from '@microsoft/fetch-event-source';
 
-import type { IFile } from '@/types';
+import type { ICandidate, IFile } from '@/types';
 
 import type { IMessage } from './types';
 
@@ -48,6 +48,21 @@ const useChatMessages = () => {
               return {
                 ...message,
                 citations: data,
+              } satisfies IMessage;
+            })
+          );
+          break;
+        }
+
+        case 'candidates': {
+          const data = JSON.parse(message.data) as Array<ICandidate>;
+          setMessages((prev) =>
+            prev.map((message) => {
+              if (message.id !== botMessageId) return message;
+
+              return {
+                ...message,
+                candidates: data,
               } satisfies IMessage;
             })
           );

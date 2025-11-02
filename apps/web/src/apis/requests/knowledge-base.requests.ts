@@ -23,3 +23,6 @@ export const removeKnowledgeBase = (id: string) => http.delete<null>(`/api/knowl
 
 export const getKnowledgeBaseByFileId = (id: string) =>
   http.get<IKnowledgeBaseDocument>(`/api/knowledge-base/file/${id}`);
+
+export const getKnowledgeBaseById = (id: string) =>
+  http.get<IKnowledgeBaseDocument>(`/api/knowledge-base/${id}`);

@@ -5,7 +5,7 @@ import { useClipboard } from '@mantine/hooks';
 import Markdown from 'marked-react';
 
 import { cn } from '@/lib/utils';
-import type { IFile } from '@/types';
+import type { ICandidate, IFile } from '@/types';
 
 import renderer from '../markdown';
 
@@ -19,6 +19,7 @@ interface SplitMessage {
 
 export interface ChatMessageProps extends IMessage {
   onClickCitation: (file: IFile) => void;
+  onClickCandidate: (candidate: ICandidate) => void;
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
@@ -29,7 +30,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   isStreaming,
   role,
   citations,
+  candidates,
   onClickCitation,
+  onClickCandidate,
 }) => {
   const isUser = role === 'user';
   // for reasoning model, we split the message into content and thought
@@ -119,6 +122,23 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           </div>
         ) : null}
 
+        {candidates && candidates.length > 0 ? (
+          <ScrollArea.Autosize mah={300} mt="md">
+            <div className="flex">
+              {candidates?.map((candidate) => (
+                <Button
+                  key={candidate.id}
+                  mr="md"
+                  variant="light"
+                  leftSection={<Icon icon="mdi:person-card-details" />}
+                  onClick={() => onClickCandidate(candidate)}>
+                  <p className="whitespace-nowrap">{candidate.name}</p>
+                </Button>
+              ))}
+            </div>
+          </ScrollArea.Autosize>
+        ) : null}
+
         {citations && citations.length > 0 ? (
           <ScrollArea.Autosize mah={300} mt="md">
             <div className="flex">
@@ -127,6 +147,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                   key={citation.id}
                   mr="md"
                   variant="light"
+                  color="teal.2"
                   onClick={() => onClickCitation(citation)}>
                   <p className="whitespace-nowrap">{citation.original_filename}</p>
                 </Button>

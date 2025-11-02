@@ -65,3 +65,20 @@ export interface IKnowledgeBaseDocument extends IBaseEntity {
 export interface IKnowledgeBaseDocumentWithFile extends IKnowledgeBaseDocument {
   file: IFile;
 }
+
+export interface ICandidate extends IBaseEntity {
+  email: string;
+  name: string;
+  contact?: string;
+  years_of_experience?: number;
+
+  skills: Array<string>;
+  experiences: Array<unknown>;
+  certifications: Array<string>;
+
+  knowledge_base_document_id: string;
+}
+
+export interface ICandidateWithKnowledgeBase extends ICandidate {
+  knowledge_base_document: IKnowledgeBaseDocument;
+}

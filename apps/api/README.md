@@ -93,3 +93,21 @@ Run celery flower:
 ```sh
 uv run celery -A src.celery.tasks flower
 ```
+
+## Installing `scapy`
+
+```bash
+uv pip install --no-build-isolation --force-reinstall spacy
+uv add scapy
+```
+
+```bash
+python -m ensurepip --default-pip
+
+# spaCy
+python -m spacy download en_core_web_sm
+
+# nltk
+python -m nltk.downloader words
+python -m nltk.downloader stopwords
+```

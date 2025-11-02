@@ -4,9 +4,11 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.core.dependencies import SessionDep, VectorDatabaseDep
-from src.models.models import File, KnowledgeBaseDocument, User
+from src.models.models import Candidate, File, KnowledgeBaseDocument, User
 from src.modules.agent.controller import AgentController
 from src.modules.auth.controller import AuthController
+from src.modules.candidate.controller import CandidateController
+from src.modules.candidate.repository import CandidateRepository
 from src.modules.file_storage.controller import FileController
 from src.modules.file_storage.repository import FileRepository
 from src.modules.knowledge_base.controller import KnowledgeBaseController
@@ -21,6 +23,7 @@ class Factory:
     knowledge_base_document_repository = partial(
         KnowledgeBaseDocumentRepository, KnowledgeBaseDocument
     )
+    candidate_repository = partial(CandidateRepository, Candidate)
 
     def get_user_controller(self, db_session: SessionDep):
         return UserController(repository=self.user_repository(session=db_session))
@@ -42,6 +45,11 @@ class Factory:
             vector_db=vector_db,
         )
 
+    def get_candidate_controller(self, db_session: SessionDep):
+        return CandidateController(
+            repository=self.candidate_repository(session=db_session)
+        )
+
 
 UserControllerDeps = Annotated[UserController, Depends(Factory().get_user_controller)]
 AuthControllerDeps = Annotated[AuthController, Depends(Factory().get_auth_controller)]
@@ -51,4 +59,7 @@ AgentControllerDeps = Annotated[
 FileControllerDeps = Annotated[FileController, Depends(Factory().get_file_controller)]
 KnowledgeBaseControllerDeps = Annotated[
     KnowledgeBaseController, Depends(Factory().get_knowledge_base_controller)
+]
+CandidateControllerDeps = Annotated[
+    CandidateController, Depends(Factory().get_candidate_controller)
 ]

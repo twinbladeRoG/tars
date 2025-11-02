@@ -11,9 +11,9 @@ from qdrant_client.models import (
     VectorParams,
 )
 
-from celery import states
+from celery import chain, states
 from src.celery.tasks import app as celery_app
-from src.celery.tasks import parse_document, store_embeddings
+from src.celery.tasks import create_candidate, parse_document, store_embeddings
 from src.celery.utils import get_celery_task_status
 from src.core.controller.base import BaseController
 from src.core.exception import BadRequestException, NotFoundException
@@ -38,11 +38,14 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
     def enqueue_document(self, *, user: User, document: File):
         knowledge_base_document = self.repository.upsert_by_file(document.id)
 
-        task = parse_document.apply_async(  # type: ignore
-            args=[document.filename, document.id],
-            link=store_embeddings.s(document.id, user.id),  # type: ignore
+        workflow = chain(
+            parse_document.s(document.filename, document.id),  # type: ignore
+            store_embeddings.s(document.id, user.id),  # type: ignore
+            create_candidate.s(),  # type: ignore
         )
-        result = get_celery_task_status(task_id=task.id)
+        task = workflow.apply_async()
+
+        result = get_celery_task_status(task_id=task.id)  # type: ignore
 
         knowledge_base_document = self.repository.update(
             knowledge_base_document.id,
@@ -207,5 +210,21 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
 
         if doc is None:
             raise NotFoundException(f"No document exists with file id: {file_id}")
+
+        return doc
+
+    def get_document_by_id(self, id: UUID, user: User):
+        doc = self.repository.session.exec(
+            self.repository._query()
+            .join(self.model_class.file)  # type: ignore
+            .join(File.owner)  # type: ignore
+            .where(
+                self.model_class.id == id,
+                User.id == user.id,
+            )
+        ).one_or_none()
+
+        if doc is None:
+            raise NotFoundException(f"No document exists with id: {id}")
 
         return doc

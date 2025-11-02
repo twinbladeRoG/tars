@@ -51,6 +51,13 @@ const renderer = {
   paragraph(text) {
     return <Text size="sm">{text}</Text>;
   },
+  listItem(children) {
+    return (
+      <Text component="li" size="sm">
+        {children}
+      </Text>
+    );
+  },
 } satisfies Partial<ReactRenderer>;
 
 export default renderer;

@@ -13,7 +13,7 @@ from qdrant_client.models import (
 
 from celery import states
 from src.celery.tasks import app as celery_app
-from src.celery.tasks import parse_document
+from src.celery.tasks import parse_document, store_embeddings
 from src.celery.utils import get_celery_task_status
 from src.core.controller.base import BaseController
 from src.core.exception import BadRequestException, NotFoundException
@@ -35,10 +35,13 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
         self.vector_db = vector_db
         self.celery = celery_app
 
-    def enqueue_document(self, *, document: File):
+    def enqueue_document(self, *, user: User, document: File):
         knowledge_base_document = self.repository.upsert_by_file(document.id)
 
-        task = parse_document.delay(document.filename, document.id)  # type: ignore
+        task = parse_document.apply_async(  # type: ignore
+            args=[document.filename, document.id],
+            link=store_embeddings.s(document.id, user.id),  # type: ignore
+        )
         result = get_celery_task_status(task_id=task.id)
 
         knowledge_base_document = self.repository.update(
@@ -77,10 +80,10 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
 
     @staticmethod
     def _get_collection_name(user: User):
-        return f"{user.first_name}_{user.id}"
+        return f"{user.first_name}_{user.id.hex}"
 
-    def ingest_documents(self, user: User, documents: list[File]):
-        for doc in documents:
+    def ingest_documents(self, user: User, files: list[File]):
+        for doc in files:
             if not doc.knowledge_base_document:
                 raise BadRequestException(
                     f"File {doc.original_filename} has not been extracted yet!"
@@ -94,7 +97,7 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
         collection_name = self._get_collection_name(user)
         self._initialize_vector_collection(collection_name)
 
-        for doc in documents:
+        for doc in files:
             if doc.knowledge_base_document and doc.knowledge_base_document.content:
                 text_splitter = RecursiveCharacterTextSplitter(
                     chunk_size=512,
@@ -102,6 +105,10 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
                 )
                 texts = text_splitter.split_text(doc.knowledge_base_document.content)
                 embeddings = create_embedding(input=texts)
+                self._remove_file_from_vector_db(
+                    file_id=doc.id.hex,
+                    collection_name=collection_name,
+                )
 
                 for _, (text, embedding) in enumerate(zip(texts, embeddings.data)):
                     self.vector_db.upload_points(
@@ -119,11 +126,9 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
                         ],
                     )
 
-        return documents
+        return files
 
-    def _get_count_of_points_from_collection(
-        self, document_id: str, collection_name: str
-    ):
+    def _get_count_of_points_from_collection(self, file_id: str, collection_name: str):
         self._initialize_vector_collection(collection_name)
 
         results = self.vector_db.count(
@@ -131,24 +136,24 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
             count_filter=Filter(
                 must=[
                     FieldCondition(
-                        key="knowledge_base_document_id",
-                        match=MatchValue(value=document_id),
+                        key="file_id",
+                        match=MatchValue(value=file_id),
                     )
                 ]
             ),
         )
 
         logger.debug(
-            f'Found {results} points for collection: "{collection_name}" for document: {document_id}'
+            f'Found {results} points for collection: "{collection_name}" for file: {file_id}'
         )
 
         return results.count
 
-    def _remove_document_from_vector_db(self, document_id: str, collection_name: str):
-        count = self._get_count_of_points_from_collection(document_id, collection_name)
+    def _remove_file_from_vector_db(self, file_id: str, collection_name: str):
+        count = self._get_count_of_points_from_collection(file_id, collection_name)
 
         if count == 0:
-            logger.debug(f"No points found for document: {document_id}")
+            logger.debug(f"No points found for document: {file_id}")
             return
 
         result = self.vector_db.delete(
@@ -156,15 +161,15 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
             points_selector=Filter(
                 must=[
                     FieldCondition(
-                        key="knowledge_base_document_id",
-                        match=MatchValue(value=document_id),
+                        key="file_id",
+                        match=MatchValue(value=file_id),
                     )
                 ]
             ),
         )
 
         logger.debug(
-            f'Removed points for collection: "{collection_name}" for document: {document_id}, with status: "{result.status}"'
+            f'Removed points for collection: "{collection_name}" for document: {file_id}, with status: "{result.status}"'
         )
 
         return result.status
@@ -182,8 +187,8 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
 
     def remove_knowledge_base_document(self, document_id: UUID, user: User):
         document = self.get_by_id(document_id)
-        self._remove_document_from_vector_db(
-            document_id=str(document_id),
+        self._remove_file_from_vector_db(
+            file_id=document.file_id.hex,
             collection_name=self._get_collection_name(user),
         )
 

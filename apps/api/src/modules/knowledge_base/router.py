@@ -20,7 +20,7 @@ def enqueue_document(
 ):
     document = file_controller.get_file_by_id(body.file_id, user.id)
     knowledge_base_document = knowledge_base_controller.enqueue_document(
-        document=document
+        document=document, user=user
     )
     return knowledge_base_document
 

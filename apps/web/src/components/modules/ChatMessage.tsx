@@ -119,19 +119,21 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           </div>
         ) : null}
 
-        <ScrollArea.Autosize mah={300} mt="md">
-          <div className="flex">
-            {citations?.map((citation) => (
-              <Button
-                key={citation.id}
-                mr="md"
-                variant="light"
-                onClick={() => onClickCitation(citation)}>
-                <p className="whitespace-nowrap">{citation.original_filename}</p>
-              </Button>
-            ))}
-          </div>
-        </ScrollArea.Autosize>
+        {citations && citations.length > 0 ? (
+          <ScrollArea.Autosize mah={300} mt="md">
+            <div className="flex">
+              {citations?.map((citation) => (
+                <Button
+                  key={citation.id}
+                  mr="md"
+                  variant="light"
+                  onClick={() => onClickCitation(citation)}>
+                  <p className="whitespace-nowrap">{citation.original_filename}</p>
+                </Button>
+              ))}
+            </div>
+          </ScrollArea.Autosize>
+        ) : null}
       </div>
 
       <ActionIcon

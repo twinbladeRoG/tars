@@ -5,14 +5,17 @@ import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 
 import { useRemoveFile } from '@/apis/queries/file-storage.queries';
-import type { IFile } from '@/types';
+import { useEnqueueDocument } from '@/apis/queries/knowledge-base.queries';
+import type { IFile, IKnowledgeBaseDocument } from '@/types';
 
 interface UserDocumentActionProps {
   document: IFile;
+  onEnqueue?: (task: IKnowledgeBaseDocument) => void;
 }
 
-const UserDocumentAction: React.FC<UserDocumentActionProps> = ({ document }) => {
+const UserDocumentAction: React.FC<UserDocumentActionProps> = ({ onEnqueue, document }) => {
   const removeFile = useRemoveFile();
+  const enqueueDocument = useEnqueueDocument();
 
   const handleRemoveFile = () => {
     modals.openConfirmModal({
@@ -37,8 +40,35 @@ const UserDocumentAction: React.FC<UserDocumentActionProps> = ({ document }) => 
     });
   };
 
+  const handleExtract = () => {
+    enqueueDocument.mutate(
+      { file_id: document.id },
+      {
+        onSuccess: (data) => {
+          onEnqueue?.(data);
+        },
+        onError: (error) => {
+          notifications.show({
+            color: 'red',
+            message: error?.message,
+          });
+        },
+      }
+    );
+  };
+
   return (
     <div className="flex justify-end gap-2">
+      <ActionIcon
+        variant="light"
+        color="blue"
+        title="Extract"
+        disabled={enqueueDocument.isPending}
+        loading={enqueueDocument.isPending}
+        onClick={handleExtract}>
+        <Icon icon="ri:file-zip-fill" />
+      </ActionIcon>
+
       <ActionIcon
         variant="light"
         color="red"

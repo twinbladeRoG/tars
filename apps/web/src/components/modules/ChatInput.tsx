@@ -52,6 +52,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ className, onSubmit, disabled }) 
             minRows={2}
             maxRows={6}
             {...field}
+            name="message"
             onKeyDown={handleKeyDown}
             disabled={disabled}
             placeholder="Ask anything"

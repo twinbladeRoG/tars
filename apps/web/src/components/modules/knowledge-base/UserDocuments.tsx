@@ -12,6 +12,7 @@ import {
   Select,
   Skeleton,
   Table,
+  Title,
 } from '@mantine/core';
 import {
   createColumnHelper,
@@ -25,13 +26,18 @@ import dayjs from 'dayjs';
 
 import { useUserFiles } from '@/apis/queries/file-storage.queries';
 import { bytesToSize, getFileIcon } from '@/lib/utils';
-import type { IFile } from '@/types';
+import type { IFile, IKnowledgeBaseDocument } from '@/types';
 
 import UserDocumentAction from './UserDocumentAction';
 
 const columnHelper = createColumnHelper<IFile>();
 
-const UserDocuments = () => {
+interface UserDocumentsProps {
+  onEnqueue?: (task: IKnowledgeBaseDocument) => void;
+  className?: string;
+}
+
+const UserDocuments: React.FC<UserDocumentsProps> = ({ className, onEnqueue }) => {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -83,10 +89,10 @@ const UserDocuments = () => {
       columnHelper.display({
         id: 'actions',
         header: () => <p className="text-center">Actions</p>,
-        cell: (info) => <UserDocumentAction document={info.row.original} />,
+        cell: (info) => <UserDocumentAction onEnqueue={onEnqueue} document={info.row.original} />,
       }),
     ],
-    []
+    [onEnqueue]
   );
 
   const data = useMemo(() => documents.data?.data ?? [], [documents.data]);
@@ -107,7 +113,13 @@ const UserDocuments = () => {
   });
 
   return (
-    <Card>
+    <Card className={className}>
+      <Card.Section withBorder inheritPadding py="xs">
+        <div className="flex items-center justify-between">
+          <Title order={4}>Documents</Title>
+        </div>
+      </Card.Section>
+
       <Table>
         <Table.Thead>
           {table.getHeaderGroups().map((headerGroup) => (

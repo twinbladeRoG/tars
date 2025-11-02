@@ -4,7 +4,7 @@
   "description": "Tars API Service",
   "scripts": {
     "celery:flower": "uv run celery -A src.celery.tasks flower",
-    "celery:parse_document": "uv run celery -A src.celery.tasks worker --loglevel=INFO",
+    "celery:worker": "uv run celery -A src.celery.tasks worker --loglevel=INFO",
     "dev": "fastapi dev main.py",
     "docker:down": "docker compose down --remove-orphans",
     "docker:up": "docker compose up --build -d",

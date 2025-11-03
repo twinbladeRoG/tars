@@ -66,6 +66,16 @@ export interface IKnowledgeBaseDocumentWithFile extends IKnowledgeBaseDocument {
   file: IFile;
 }
 
+export interface ICandidateExperience {
+  months_in_experience?: number;
+  company: string;
+  start_date?: string;
+  end_date?: string;
+  skills?: string;
+  role: string;
+  additional_info?: string;
+}
+
 export interface ICandidate extends IBaseEntity {
   email: string;
   name: string;
@@ -73,7 +83,7 @@ export interface ICandidate extends IBaseEntity {
   years_of_experience?: number;
 
   skills: Array<string>;
-  experiences: Array<unknown>;
+  experiences: Array<ICandidateExperience>;
   certifications: Array<string>;
 
   knowledge_base_document_id: string;

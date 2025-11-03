@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 from pydantic import EmailStr
@@ -14,7 +14,7 @@ class CandidateBase(SQLModel):
     years_of_experience: float = Field(default=0)
 
     skills: List[str] = Field(sa_column=Column(ARRAY(String)))
-    experiences: List[Dict[str, str]] = Field(sa_column=Column(JSONB))
+    experiences: List[Dict[str, Any]] = Field(sa_column=Column(JSONB))
     certifications: List[str] = Field(sa_column=Column(ARRAY(String)))
 
 

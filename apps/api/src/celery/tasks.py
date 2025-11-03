@@ -124,13 +124,17 @@ def create_candidate(knowledge_base_document_id: UUID):
         repository=CandidateRepository(model=Candidate, session=session)
     )
 
+    resume_parse = ResumeParser()
+    output = resume_parse.extract_resume_details(content=content)
+
     candidate = CandidateCreate(
         email=email,
         name=name,
         contact=contact,
-        skills=[],
-        certifications=[],
-        experiences=[],
+        years_of_experience=output.years_of_experience,
+        skills=output.skills,
+        certifications=output.certifications,
+        experiences=[e.model_dump(mode="json") for e in output.experiences],
         knowledge_base_document_id=knowledge_base_document_id,
     )
 

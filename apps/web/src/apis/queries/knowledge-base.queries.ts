@@ -21,13 +21,14 @@ export const useEnqueueDocument = () => {
   });
 };
 
-export const useTaskStatus = (taskId: string) =>
+export const useTaskStatus = (taskId?: string | null) =>
   useQuery({
     queryKey: ['task', taskId],
     queryFn: async () => {
-      const res = await getTaskStatus(taskId);
+      const res = await getTaskStatus(String(taskId));
       return res;
     },
+    enabled: !!taskId,
   });
 
 export const useIngestDocuments = () => {

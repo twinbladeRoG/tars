@@ -92,6 +92,11 @@ const RootLayout = () => {
               label="Knowledge Base"
               leftSection={<Icon icon="hugeicons:ai-book" className="text-xl" />}
             />
+            <AppNavLink
+              to="/candidates"
+              label="Candidates"
+              leftSection={<Icon icon="mdi:person-group" className="text-xl" />}
+            />
           </NavLink>
         </AppShell.Section>
 

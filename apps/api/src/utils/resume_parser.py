@@ -4,7 +4,7 @@ from typing import List, Optional, cast
 
 import spacy
 from langchain.messages import HumanMessage, SystemMessage
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 from spacy.matcher import Matcher
 
 from src.modules.llm_models.model import LlmModelFactory
@@ -27,10 +27,15 @@ class CandidateExperience(BaseModel):
 
 
 class ResumeMetadata(BaseModel):
-    contact: str = Field(description="Contact Number or Phone Number of the candidate")
+    email: EmailStr = Field(description="Email of the candidate")
+    name: str = Field(description="Name of the candidate")
+    contact: Optional[str] = Field(
+        description="Contact Number or Phone Number of the candidate"
+    )
     years_of_experience: float = Field(
         description="Years of experience of the candidate"
     )
+
     skills: List[str] = Field(
         default=[], description="List of skills the candidate have"
     )

@@ -67,3 +67,13 @@ export const getExtractionStatusColor = (status?: ExtractionStatus | null): Defa
       return 'gray';
   }
 };
+
+export const formatMonths = (totalMonths: number) => {
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+
+  if (years && months)
+    return `${years} year${years > 1 ? 's' : ''} ${months} month${months > 1 ? 's' : ''}`;
+  if (years) return `${years} year${years > 1 ? 's' : ''}`;
+  return `${months} month${months > 1 ? 's' : ''}`;
+};

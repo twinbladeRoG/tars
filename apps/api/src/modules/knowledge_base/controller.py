@@ -11,7 +11,7 @@ from qdrant_client.models import (
     VectorParams,
 )
 
-from celery import chain, states
+from celery import chain
 from src.celery.tasks import app as celery_app
 from src.celery.tasks import create_candidate, parse_document, store_embeddings
 from src.celery.utils import get_celery_task_status
@@ -60,9 +60,6 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
         if knowledge_base_document is not None:
             attributes = {"status": result.status}
 
-            if result.status == states.SUCCESS:
-                attributes["content"] = result.result
-
             knowledge_base_document = self.repository.update(
                 knowledge_base_document.id, attributes
             )
@@ -108,6 +105,7 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
                 )
                 texts = text_splitter.split_text(doc.knowledge_base_document.content)
                 embeddings = create_embedding(input=texts)
+
                 self._remove_file_from_vector_db(
                     file_id=doc.id.hex,
                     collection_name=collection_name,

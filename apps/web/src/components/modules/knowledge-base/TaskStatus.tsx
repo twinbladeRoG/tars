@@ -1,14 +1,6 @@
 import React, { useMemo } from 'react';
 import { Icon } from '@iconify/react';
-import {
-  ActionIcon,
-  Badge,
-  Card,
-  type DefaultMantineColor,
-  Divider,
-  ScrollArea,
-  Text,
-} from '@mantine/core';
+import { ActionIcon, Badge, Card, type DefaultMantineColor, ScrollArea, Text } from '@mantine/core';
 
 import { useTaskStatus } from '@/apis/queries/knowledge-base.queries';
 import { getExtractionStatusColor } from '@/lib/utils';
@@ -39,8 +31,6 @@ const TaskStatus: React.FC<TaskStatusProps> = ({ taskId, className }) => {
       <ScrollArea h={250}>
         <Text size="xs">{task.data?.content}</Text>
       </ScrollArea>
-
-      <Divider className="my-4" />
     </Card>
   );
 };

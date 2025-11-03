@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { getCandidate } from '../requests/candidate.requests';
+import { getCandidate, getCandidates } from '../requests/candidate.requests';
 
 export const useCandidate = (id: string) =>
   useQuery({
@@ -9,4 +9,12 @@ export const useCandidate = (id: string) =>
       return await getCandidate(id);
     },
     enabled: !!id,
+  });
+
+export const useCandidates = () =>
+  useQuery({
+    queryKey: ['candidates'],
+    queryFn: async () => {
+      return await getCandidates();
+    },
   });

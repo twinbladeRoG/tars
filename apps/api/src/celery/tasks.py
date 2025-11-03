@@ -1,11 +1,12 @@
 from uuid import UUID
 
 import pymupdf
+from celery.utils.log import get_task_logger
 
 from celery import Celery
 from src.core.config import settings
 from src.core.dependencies import get_database_session
-from src.core.exception import BadRequestException, NotFoundException
+from src.core.exception import BadRequestException
 from src.core.vector_db import vector_db_client
 from src.models.models import Candidate, KnowledgeBaseDocument, User
 from src.modules.candidate.controller import CandidateController
@@ -15,6 +16,8 @@ from src.modules.file_storage.controller import FileController
 from src.modules.users.controller import UserController
 from src.modules.users.repository import UserRepository
 from src.utils.resume_parser import ResumeParser
+
+logger = get_task_logger(__name__)
 
 app = Celery(
     __name__,
@@ -110,16 +113,6 @@ def create_candidate(knowledge_base_document_id: UUID):
     name = ResumeParser.extract_name(content)
     contact = ResumeParser.extract_contact_number_from_resume(content)
 
-    if email is None:
-        raise NotFoundException(
-            f"Email for found for Knowledge base: {knowledge_base_document_id}"
-        )
-
-    if name is None:
-        raise NotFoundException(
-            f"Name for found for Knowledge base: {knowledge_base_document_id}"
-        )
-
     candidate_controller = CandidateController(
         repository=CandidateRepository(model=Candidate, session=session)
     )
@@ -127,10 +120,25 @@ def create_candidate(knowledge_base_document_id: UUID):
     resume_parse = ResumeParser()
     output = resume_parse.extract_resume_details(content=content)
 
+    if output.email != email:
+        logger.info(
+            f"Email extracted from model is different. Initial: {email}. Current: {output.email}"
+        )
+
+    if output.name != name:
+        logger.info(
+            f"Name extracted from model is different. Initial: {name}. Current: {output.name}"
+        )
+
+    if output.contact != contact:
+        logger.info(
+            f"Contact extracted from model is different. Initial: {contact}. Current: {output.contact}"
+        )
+
     candidate = CandidateCreate(
-        email=email,
-        name=name,
-        contact=contact,
+        email=output.email,
+        name=output.name,
+        contact=output.contact,
         years_of_experience=output.years_of_experience,
         skills=output.skills,
         certifications=output.certifications,

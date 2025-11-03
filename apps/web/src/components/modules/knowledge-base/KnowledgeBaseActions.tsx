@@ -3,8 +3,9 @@ import { Icon } from '@iconify/react';
 import { ActionIcon, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { useRemoveKnowledgeBase } from '@/apis/queries/knowledge-base.queries';
+import { useRemoveKnowledgeBase, useTaskStatus } from '@/apis/queries/knowledge-base.queries';
 import type { IKnowledgeBaseDocumentWithFile } from '@/types';
 
 interface KnowledgeBaseActionsProps {
@@ -13,6 +14,8 @@ interface KnowledgeBaseActionsProps {
 
 const KnowledgeBaseActions: React.FC<KnowledgeBaseActionsProps> = ({ knowledgeBase }) => {
   const remove = useRemoveKnowledgeBase();
+  const task = useTaskStatus(knowledgeBase.task_id);
+  const queryClient = useQueryClient();
 
   const handleRemoveFile = () => {
     modals.openConfirmModal({
@@ -33,8 +36,23 @@ const KnowledgeBaseActions: React.FC<KnowledgeBaseActionsProps> = ({ knowledgeBa
     });
   };
 
+  const handleRefresh = async () => {
+    await task.refetch();
+    await queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
+  };
+
   return (
     <div className="flex justify-end gap-2">
+      {knowledgeBase.task_id ? (
+        <ActionIcon
+          variant="light"
+          disabled={task.isFetching}
+          loading={task.isFetching}
+          onClick={handleRefresh}>
+          <Icon icon="mdi:refresh" />
+        </ActionIcon>
+      ) : null}
+
       <ActionIcon
         variant="light"
         color="red"

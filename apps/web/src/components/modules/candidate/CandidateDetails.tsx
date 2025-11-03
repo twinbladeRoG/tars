@@ -14,6 +14,7 @@ import {
 import dayjs from 'dayjs';
 
 import { useKnowledgeBase } from '@/apis/queries/knowledge-base.queries';
+import { formatMonths } from '@/lib/utils';
 import type { ICandidate } from '@/types';
 
 interface CandidateDetailsProps {
@@ -23,16 +24,6 @@ interface CandidateDetailsProps {
 
 const CandidateDetails: React.FC<CandidateDetailsProps> = ({ candidate, className }) => {
   const knowledgeBase = useKnowledgeBase(candidate.knowledge_base_document_id);
-
-  const formatMonths = (totalMonths: number) => {
-    const years = Math.floor(totalMonths / 12);
-    const months = totalMonths % 12;
-
-    if (years && months)
-      return `${years} year${years > 1 ? 's' : ''} ${months} month${months > 1 ? 's' : ''}`;
-    if (years) return `${years} year${years > 1 ? 's' : ''}`;
-    return `${months} month${months > 1 ? 's' : ''}`;
-  };
 
   return (
     <div className={className}>
@@ -118,13 +109,13 @@ const CandidateDetails: React.FC<CandidateDetailsProps> = ({ candidate, classNam
 
       <Title order={4}>Certifications</Title>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <ul className="flex list-disc flex-wrap items-center gap-2">
         {candidate.certifications.map((cert) => (
-          <Badge size="xs" radius="sm" key={cert}>
+          <li className="text-sm" key={cert}>
             {cert}
-          </Badge>
+          </li>
         ))}
-      </div>
+      </ul>
 
       <Divider my="sm" />
 

@@ -3,6 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter
 
 from src.core.dependencies import CurrentUser
+from src.core.exception import BadRequestException
 from src.core.factory.factory import UserControllerDeps
 
 from .schema import UserCreate, UserPublic
@@ -24,5 +25,8 @@ def get_user_by_id(id: UUID, user_controller: UserControllerDeps, user: CurrentU
 
 @router.post("/", response_model=UserPublic)
 def create_user(user_controller: UserControllerDeps, user: UserCreate):
+    username_exists = user_controller.repository.get_by("username", user.username)
+    if username_exists:
+        raise BadRequestException(f"Username {user.username} already exists")
     response = user_controller.create(user)
     return response

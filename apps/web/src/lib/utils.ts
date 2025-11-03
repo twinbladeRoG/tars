@@ -62,7 +62,7 @@ export const getExtractionStatusColor = (status?: ExtractionStatus | null): Defa
     case EXTRACTION_STATUS.STARTED:
       return 'green';
     case EXTRACTION_STATUS.SUCCESS:
-      return 'green';
+      return 'teal';
     default:
       return 'gray';
   }

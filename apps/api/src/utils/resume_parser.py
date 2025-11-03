@@ -4,7 +4,7 @@ from typing import List, Optional, cast
 
 import spacy
 from langchain.messages import HumanMessage, SystemMessage
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from spacy.matcher import Matcher
 
 from src.modules.llm_models.model import LlmModelFactory
@@ -43,6 +43,12 @@ class ResumeMetadata(BaseModel):
         default=[], description="List of certifications the candidate have"
     )
     experiences: List[CandidateExperience] = Field(default=[], description="")
+
+    @field_validator("email", mode="before")
+    def lower_case_email(cls, v: str) -> str:
+        if isinstance(v, str):
+            return v.lower()
+        return v
 
 
 class ResumeParser:

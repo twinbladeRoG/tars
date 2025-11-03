@@ -105,28 +105,25 @@ const RootLayout = () => {
             <Skeleton h={100} mt="sm" animate={false} />
           ) : (
             <Card>
-              <div className="flex items-center gap-7">
-                <Avatar size={'lg'}>
+              <div className="flex items-center gap-4">
+                <Avatar size="md">
                   {user.data?.first_name?.charAt(0)}
                   {user.data?.last_name?.charAt(0)}
                 </Avatar>
                 <div className="">
-                  <Text>
+                  <Text size="xs">
                     {user.data?.first_name} {user.data?.last_name}
                   </Text>
-                  <Text>@{user.data?.username}</Text>
+                  <Text size="xs">@{user.data?.username}</Text>
                 </div>
                 <Menu>
                   <Menu.Target>
-                    <ActionIcon variant="subtle">
+                    <ActionIcon ml="auto" variant="subtle">
                       <Icon icon="mdi:dots-vertical" className="text-2xl" />
                     </ActionIcon>
                   </Menu.Target>
 
                   <Menu.Dropdown>
-                    <Menu.Item leftSection={<Icon icon="mdi:user-card-details" />}>
-                      Profile
-                    </Menu.Item>
                     <Menu.Item
                       leftSection={<Icon icon="mdi:logout" />}
                       color="red"

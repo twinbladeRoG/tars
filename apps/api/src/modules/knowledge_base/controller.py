@@ -100,8 +100,8 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
         for doc in files:
             if doc.knowledge_base_document and doc.knowledge_base_document.content:
                 text_splitter = RecursiveCharacterTextSplitter(
-                    chunk_size=512,
-                    chunk_overlap=20,
+                    chunk_size=1024,
+                    chunk_overlap=256,
                 )
                 texts = text_splitter.split_text(doc.knowledge_base_document.content)
                 embeddings = create_embedding(input=texts)

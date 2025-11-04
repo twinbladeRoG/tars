@@ -45,9 +45,12 @@ class Factory:
             vector_db=vector_db,
         )
 
-    def get_candidate_controller(self, db_session: SessionDep):
+    def get_candidate_controller(
+        self, vector_db: VectorDatabaseDep, db_session: SessionDep
+    ):
         return CandidateController(
-            repository=self.candidate_repository(session=db_session)
+            repository=self.candidate_repository(session=db_session),
+            vector_db=vector_db,
         )
 
 

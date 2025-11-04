@@ -114,7 +114,8 @@ def create_candidate(knowledge_base_document_id: UUID):
     contact = ResumeParser.extract_contact_number_from_resume(content)
 
     candidate_controller = CandidateController(
-        repository=CandidateRepository(model=Candidate, session=session)
+        repository=CandidateRepository(model=Candidate, session=session),
+        vector_db=vector_db_client,
     )
 
     resume_parse = ResumeParser()

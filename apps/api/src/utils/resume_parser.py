@@ -116,7 +116,7 @@ class ResumeParser:
 
     def extract_resume_details(self, content: str) -> ResumeMetadata:
         prompt = (
-            "You are a expert in reading a resume of an candidate and extract the relevant information\n"
+            "You are a expert in reading a resume of a candidate and extract the relevant information\n"
             "Below is the content of the resume of the candidate\n\n"
             "<CONTENT>\n{content}</CONTENT>"
         )

@@ -13,12 +13,18 @@ from qdrant_client.models import (
 
 from celery import chain
 from src.celery.tasks import app as celery_app
-from src.celery.tasks import create_candidate, parse_document, store_embeddings
+from src.celery.tasks import (
+    create_candidate,
+    create_candidate_embeddings,
+    parse_document,
+    store_embeddings,
+)
 from src.celery.utils import get_celery_task_status
 from src.core.controller.base import BaseController
 from src.core.exception import BadRequestException, NotFoundException
 from src.core.logger import logger
 from src.models.models import File, KnowledgeBaseDocument, User
+from src.modules.candidate.controller import CandidateController
 from src.modules.llm_models.embedding import create_embedding
 
 from .repository import KnowledgeBaseDocumentRepository
@@ -42,6 +48,7 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
             parse_document.s(document.filename, document.id),  # type: ignore
             store_embeddings.s(document.id, user.id),  # type: ignore
             create_candidate.s(),  # type: ignore
+            create_candidate_embeddings.s(user.id),  # type: ignore
         )
         task = workflow.apply_async()
 
@@ -104,7 +111,7 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
                     chunk_overlap=256,
                 )
                 texts = text_splitter.split_text(doc.knowledge_base_document.content)
-                embeddings = create_embedding(input=texts)
+                embeddings = create_embedding(input="texts")
 
                 self._remove_file_from_vector_db(
                     file_id=doc.id.hex,
@@ -186,8 +193,17 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
         results = self.repository.session.exec(statement).all()
         return list(results)
 
-    def remove_knowledge_base_document(self, document_id: UUID, user: User):
+    def remove_knowledge_base_document(
+        self, document_id: UUID, user: User, candidate_controller: CandidateController
+    ):
         document = self.get_by_id(document_id)
+
+        if document.candidate is not None:
+            candidate_controller._remove_file_from_vector_db(
+                candidate_id=document.candidate.id.hex,
+                collection_name=candidate_controller._get_collection_name(user),
+            )
+
         self._remove_file_from_vector_db(
             file_id=document.file_id.hex,
             collection_name=self._get_collection_name(user),

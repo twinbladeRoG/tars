@@ -15,3 +15,6 @@ class CandidateRepository(BaseRepository[Candidate]):
 
         record = self.session.exec(statement).one_or_none()
         return record
+
+    def get_by_id(self, id: UUID) -> Candidate:
+        return self.get_by("id", id, unique=True)

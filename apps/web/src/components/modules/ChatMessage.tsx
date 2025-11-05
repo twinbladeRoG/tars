@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { Accordion, ActionIcon, Button, Loader, ScrollArea, Skeleton } from '@mantine/core';
+import { Accordion, ActionIcon, Badge, Button, Loader, Skeleton } from '@mantine/core';
 import { useClipboard } from '@mantine/hooks';
 import Markdown from 'marked-react';
 
@@ -123,37 +123,32 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         ) : null}
 
         {candidates && candidates.length > 0 ? (
-          <ScrollArea.Autosize mah={300} mt="md">
-            <div className="flex">
-              {candidates?.map((candidate) => (
-                <Button
-                  key={candidate.id}
-                  mr="md"
-                  variant="light"
-                  leftSection={<Icon icon="mdi:person-card-details" />}
-                  onClick={() => onClickCandidate(candidate)}>
-                  <p className="whitespace-nowrap">{candidate.name}</p>
-                </Button>
-              ))}
-            </div>
-          </ScrollArea.Autosize>
+          <div className="my-4 flex flex-wrap gap-2">
+            {candidates?.map((candidate) => (
+              <Button
+                key={candidate.id}
+                variant="light"
+                leftSection={<Icon icon="mdi:person-card-details" />}
+                rightSection={<Badge size="xs">{candidate.score.toFixed(2)}</Badge>}
+                onClick={() => onClickCandidate(candidate)}>
+                <p className="whitespace-nowrap">{candidate.name}</p>
+              </Button>
+            ))}
+          </div>
         ) : null}
 
         {citations && citations.length > 0 ? (
-          <ScrollArea.Autosize mah={300} mt="md">
-            <div className="flex">
-              {citations?.map((citation) => (
-                <Button
-                  key={citation.id}
-                  mr="md"
-                  variant="light"
-                  color="teal.2"
-                  onClick={() => onClickCitation(citation)}>
-                  <p className="whitespace-nowrap">{citation.original_filename}</p>
-                </Button>
-              ))}
-            </div>
-          </ScrollArea.Autosize>
+          <div className="flex flex-wrap gap-2">
+            {citations?.map((citation) => (
+              <Button
+                key={citation.id}
+                variant="light"
+                color="teal.2"
+                onClick={() => onClickCitation(citation)}>
+                <p className="whitespace-nowrap">{citation.original_filename}</p>
+              </Button>
+            ))}
+          </div>
         ) : null}
       </div>
 

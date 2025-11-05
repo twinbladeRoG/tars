@@ -92,3 +92,7 @@ export interface ICandidate extends IBaseEntity {
 export interface ICandidateWithKnowledgeBase extends ICandidate {
   knowledge_base_document: IKnowledgeBaseDocument;
 }
+
+export interface ICandidateWithScore extends ICandidate {
+  score: number;
+}

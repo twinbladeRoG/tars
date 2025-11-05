@@ -17,9 +17,10 @@ from src.modules.candidate.controller import CandidateController
 from src.modules.file_storage.controller import FileController
 from src.modules.knowledge_base.controller import KnowledgeBaseController
 
+from .nodes.candidate_retrieval import CandidateRetrievalNode
 from .nodes.chatbot import ChatBotNode
 from .nodes.citations import CitationNode
-from .nodes.retrieval import RetrievalNode
+from .nodes.resume_retrieval import ResumeRetrievalNode
 from .state import AgentState
 
 
@@ -33,6 +34,7 @@ class RootAgent:
         *,
         file_controller: FileController,
         candidate_controller: CandidateController,
+        user: User,
     ):
         if self.agent is not None:
             logger.debug("Agent already complied")
@@ -42,7 +44,12 @@ class RootAgent:
 
         # Add Nodes
         agent_builder.add_node("chatbot", ChatBotNode())
-        agent_builder.add_node("vector_search", RetrievalNode())
+        agent_builder.add_node(
+            "resume_retrieval",
+            ResumeRetrievalNode(
+                collection_name=KnowledgeBaseController._get_collection_name(user)
+            ),
+        )
         agent_builder.add_node(
             "citations",
             CitationNode(
@@ -50,10 +57,18 @@ class RootAgent:
                 candidate_controller=candidate_controller,
             ),
         )
+        agent_builder.add_node(
+            "candidate_retrieval",
+            CandidateRetrievalNode(
+                collection_name=CandidateController._get_collection_name(user)
+            ),
+        )
 
         # Add Edges
-        agent_builder.add_edge(START, "vector_search")
-        agent_builder.add_edge("vector_search", "citations")
+        agent_builder.add_edge(START, "resume_retrieval")
+        agent_builder.add_edge(START, "candidate_retrieval")
+        agent_builder.add_edge("resume_retrieval", "citations")
+        agent_builder.add_edge("candidate_retrieval", "citations")
         agent_builder.add_edge("citations", "chatbot")
         agent_builder.add_edge("chatbot", END)
 
@@ -74,6 +89,7 @@ class RootAgent:
             agent = self.compile(
                 file_controller=file_controller,
                 candidate_controller=candidate_controller,
+                user=user,
             )
 
             if conversation_id is None:
@@ -98,6 +114,7 @@ class RootAgent:
                 "citations": [],
                 "retrieved_points": [],
                 "candidates": [],
+                "candidate_retrieved_points": [],
             }
 
             events = agent.stream(
@@ -106,7 +123,7 @@ class RootAgent:
                 stream_mode="updates",
             )
 
-            yield f"event: node\ndata: vector_search\n\n"
+            yield f"event: node\ndata: resume_retrieval\n\n"
 
             for event in events:
                 for node, event_value in event.items():

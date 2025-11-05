@@ -3,7 +3,11 @@ from uuid import UUID
 from fastapi import APIRouter
 
 from src.core.dependencies import CurrentUser
-from src.core.factory.factory import FileControllerDeps, KnowledgeBaseControllerDeps
+from src.core.factory.factory import (
+    CandidateControllerDeps,
+    FileControllerDeps,
+    KnowledgeBaseControllerDeps,
+)
 from src.models.models import KnowledgeBaseDocument, KnowledgeBaseDocumentWithFile
 
 from .schema import DocumentExtractionRequest, IngestDocumentRequest
@@ -54,8 +58,11 @@ def remove_knowledge_base(
     user: CurrentUser,
     document_id: UUID,
     knowledge_base_controller: KnowledgeBaseControllerDeps,
+    candidate_controller: CandidateControllerDeps,
 ):
-    knowledge_base_controller.remove_knowledge_base_document(document_id, user)
+    knowledge_base_controller.remove_knowledge_base_document(
+        document_id, user, candidate_controller
+    )
     return None
 
 

@@ -13,10 +13,15 @@ class AgentController:
         self.agent = RootAgent()
 
     def get_workflow(
-        self, file_controller: FileController, candidate_controller: CandidateController
+        self,
+        file_controller: FileController,
+        candidate_controller: CandidateController,
+        user: User,
     ):
         agent = self.agent.compile(
-            file_controller=file_controller, candidate_controller=candidate_controller
+            file_controller=file_controller,
+            candidate_controller=candidate_controller,
+            user=user,
         )
         mermaid = agent.get_graph(xray=True).draw_mermaid()
         state = agent.get_graph(xray=True).to_json()

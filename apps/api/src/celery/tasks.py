@@ -143,10 +143,28 @@ def create_candidate(knowledge_base_document_id: UUID):
         years_of_experience=output.years_of_experience,
         skills=output.skills,
         certifications=output.certifications,
-        experiences=[e.model_dump(mode="json") for e in output.experiences],
+        experiences=[e.model_dump(mode="json") for e in output.experiences],  # type: ignore
         knowledge_base_document_id=knowledge_base_document_id,
     )
 
     candidate = candidate_controller.create(candidate)
 
-    return candidate.model_dump_json()
+    return candidate.id
+
+
+@app.task(name="create_candidate_embeddings")
+def create_candidate_embeddings(candidate_id: UUID, user_id: UUID):
+    user_controller = UserController(
+        repository=UserRepository(model=User, session=session)
+    )
+
+    user = user_controller.get_by_id(user_id)
+
+    candidate_controller = CandidateController(
+        repository=CandidateRepository(model=Candidate, session=session),
+        vector_db=vector_db_client,
+    )
+
+    candidate_controller.ingest_candidate(candidate_id=candidate_id, user=user)
+
+    return None

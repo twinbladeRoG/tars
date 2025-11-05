@@ -21,7 +21,9 @@ def get_agent(
     candidate_controller: CandidateControllerDeps,
 ):
     state, mermaid = agent_controller.get_workflow(
-        file_controller=file_controller, candidate_controller=candidate_controller
+        file_controller=file_controller,
+        candidate_controller=candidate_controller,
+        user=user,
     )
     return AgentWorkflowResponse(mermaid=mermaid, state=state)
 

@@ -84,7 +84,7 @@ const AgentNode: React.FC<AgentNodeProps> = ({ data }) => {
 
   return (
     <div
-      className={cn('relative w-full rounded border bg-blue-700/20 p-2', {
+      className={cn('relative w-full rounded border bg-blue-700/20 px-3 py-2', {
         'bg-blue-700': data.isVisited,
         'bg-teal-600': isStartNode,
         'bg-emerald-600': isEndNode,
@@ -97,7 +97,7 @@ const AgentNode: React.FC<AgentNodeProps> = ({ data }) => {
 
       {!isStartNode && !isEndNode ? (
         <p
-          className={cn('text-xs', {
+          className={cn('text-xs whitespace-nowrap', {
             'font-bold': data.isActive || data.isVisited,
           })}>
           {data.label}
@@ -106,7 +106,7 @@ const AgentNode: React.FC<AgentNodeProps> = ({ data }) => {
 
       {isStartNode ? (
         <p
-          className={cn('text-xs', {
+          className={cn('text-xs whitespace-nowrap', {
             'font-bold': data.isActive || data.isVisited,
           })}>
           start
@@ -115,7 +115,7 @@ const AgentNode: React.FC<AgentNodeProps> = ({ data }) => {
 
       {isEndNode ? (
         <p
-          className={cn('text-xs', {
+          className={cn('text-xs whitespace-nowrap', {
             'font-bold': data.isActive || data.isVisited,
           })}>
           end

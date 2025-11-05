@@ -77,13 +77,15 @@ const CandidateTable = () => {
       }),
       columnHelper.accessor('name', {
         header: 'Name',
-        cell: (info) => info.getValue(),
+        cell: (info) => <Text size="sm">{info.getValue()}</Text>,
       }),
       columnHelper.accessor('email', {
-        header: 'Uploaded On',
+        header: 'Email',
         cell: (info) => (
           <div className="flex items-center">
-            <Anchor href={`mailto:${info.getValue()}`}>{info.getValue()}</Anchor>
+            <Anchor size="sm" href={`mailto:${info.getValue()}`}>
+              {info.getValue()}
+            </Anchor>
 
             <CopyButton value={info.getValue()} timeout={2000}>
               {({ copied, copy }) => (
@@ -99,9 +101,9 @@ const CandidateTable = () => {
         header: 'Contact',
         cell: (info) => (
           <div className="flex items-center">
-            <Text size="sm" mr="sm">
-              Email: <Anchor href={`mailto:${info.getValue()}`}>{info.getValue()}</Anchor>
-            </Text>
+            <Anchor size="sm" href={`mailto:${info.getValue()}`}>
+              {info.getValue()}
+            </Anchor>
 
             {info.getValue() ? (
               <CopyButton value={info.getValue() ?? ''} timeout={2000}>
@@ -117,7 +119,7 @@ const CandidateTable = () => {
       }),
       columnHelper.accessor('years_of_experience', {
         header: 'Experience',
-        cell: (info) => `${info.getValue()} years`,
+        cell: (info) => <Text size="sm">{`${info.getValue()} years`}</Text>,
       }),
     ],
     []

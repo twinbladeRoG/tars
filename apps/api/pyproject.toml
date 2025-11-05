@@ -9,6 +9,7 @@ dependencies = [
     "alembic>=1.16.5",
     "celery[redis,sqlalchemy]>=5.5.3",
     "fastapi[standard]>=0.118.2",
+    "fastembed>=0.7.3",
     "langchain>=1.0.0",
     "langchain-deepseek>=1.0.0",
     "langchain-openai>=1.0.0",

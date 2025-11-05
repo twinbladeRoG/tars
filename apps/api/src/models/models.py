@@ -64,3 +64,8 @@ class Candidate(BaseModelMixin, CandidateBase, table=True):
 class CandidateWithKnowledgeBase(BaseModelMixin, KnowledgeBaseDocumentBase):
     knowledge_base_document_id: UUID
     knowledge_base_document: KnowledgeBaseDocument
+
+
+class CandidateWithScore(BaseModelMixin, CandidateBase):
+    score: float
+    knowledge_base_document_id: UUID

@@ -82,6 +82,10 @@ class Settings(BaseSettings):
 
     OPEN_API_KEY: SecretStr = SecretStr("sk-no-key-required")
 
+    AZURE_OPEN_AI_KEY: SecretStr = SecretStr("sk-no-key-required")
+    AZURE_OPEN_AI_ENDPOINT: str = ""
+    AZURE_OPEN_AI_VERSION: str = ""
+
     VECTOR_DB_URL: str = "http://localhost:6333"
 
     REDIS_URL: str = "redis://localhost:6379"

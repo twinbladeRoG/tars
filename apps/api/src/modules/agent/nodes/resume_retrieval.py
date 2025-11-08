@@ -1,3 +1,4 @@
+from fastembed.rerank.cross_encoder import TextCrossEncoder
 from langchain_core.runnables import RunnableConfig
 
 from src.core.logger import logger
@@ -12,6 +13,9 @@ class ResumeRetrievalNode:
         self.vector_db = vector_db_client
         self.create_embedding = create_embedding
         self.collection_name = collection_name
+        self.reranker = TextCrossEncoder(
+            model_name="jinaai/jina-reranker-v2-base-multilingual"
+        )
 
     def __call__(self, state: AgentState, config: RunnableConfig):
         query = state["messages"][-1].content
@@ -27,4 +31,14 @@ class ResumeRetrievalNode:
             f"Resumes retrieved from vector store is {len(results)} for query: {query}"
         )
 
-        return {"resume_retrieved_points": results}
+        resume_chunks = []
+        for i, hit in enumerate(results):
+            resume_chunks.append(hit.payload["text"])  # type: ignore
+
+        new_scores = list(self.reranker.rerank(str(query), resume_chunks))
+        ranking = [(i, score) for i, score in enumerate(new_scores)]
+        ranking.sort(key=lambda x: x[1], reverse=True)
+
+        sorted_results = [results[idx] for idx, _ in ranking]
+
+        return {"resume_retrieved_points": sorted_results}

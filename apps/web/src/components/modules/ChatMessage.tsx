@@ -30,10 +30,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   isLoading,
   isStreaming,
   role,
-  citations,
   candidates,
   resumeCandidates,
-  onClickCitation,
   onClickCandidate,
   onClickResumeCandidate,
 }) => {
@@ -127,7 +125,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
         {candidates && candidates.length > 0 ? (
           <div className="mt-2">
-            <Text size="xs" mb="xs">
+            <Text size="xs" mb="xs" c="gray.6">
               Candidates
             </Text>
             <div className="flex flex-wrap gap-2">
@@ -148,7 +146,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
         {resumeCandidates && resumeCandidates.length > 0 ? (
           <div className="mt-2">
-            <Text size="xs" mb="xs">
+            <Text size="xs" mb="xs" c="gray.6">
               Resume Candidates
             </Text>
             <div className="flex flex-wrap gap-2">
@@ -161,26 +159,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                   leftSection={<Icon icon="mdi:person-card-details" />}
                   onClick={() => onClickResumeCandidate(candidate)}>
                   <p className="whitespace-nowrap">{candidate.name}</p>
-                </Button>
-              ))}
-            </div>
-          </div>
-        ) : null}
-
-        {citations && citations.length > 0 ? (
-          <div className="mt-2">
-            <Text size="xs" mb="xs">
-              Citations
-            </Text>
-            <div className="flex flex-wrap gap-2">
-              {citations?.map((citation) => (
-                <Button
-                  size="xs"
-                  key={citation.id}
-                  variant="light"
-                  color="teal.2"
-                  onClick={() => onClickCitation(citation)}>
-                  <p className="whitespace-nowrap">{citation.original_filename}</p>
                 </Button>
               ))}
             </div>

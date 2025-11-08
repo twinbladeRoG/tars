@@ -20,11 +20,11 @@ class ResumeRetrievalNode:
         results = self.vector_db.search(
             collection_name=self.collection_name,
             query_vector=query_embedding.data[0].embedding,
-            limit=10,
+            limit=5,
         )
 
         logger.debug(
             f"Resumes retrieved from vector store is {len(results)} for query: {query}"
         )
 
-        return {"retrieved_points": results}
+        return {"resume_retrieved_points": results}

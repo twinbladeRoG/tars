@@ -18,12 +18,26 @@ class CandidateExperience(BaseModel):
     start_date: datetime = Field(description="Start date at the company")
     end_data: Optional[datetime] = Field(description="End date at the company")
     skills: Optional[str] = Field(
-        description="Comma separated list of skill at the company"
+        description="Comma separated list of unique skill at the company"
     )
     role: str = Field(description="Role at the company")
     additional_info: str = Field(
-        description="Additional Information while the candidate was at the company"
+        description="Experiences the candidate has listed while working at the company. Must be point wise."
     )
+
+    @field_validator("skills", mode="before")
+    def unique_skills(cls, v):
+        if not v or not isinstance(v, str):
+            return v
+        skills = [s.strip() for s in v.split(",") if s.strip()]
+        seen = set()
+        unique = []
+        for skill in skills:
+            key = skill.lower()
+            if key not in seen:
+                seen.add(key)
+                unique.append(skill)
+        return ", ".join(unique)
 
 
 class ResumeMetadata(BaseModel):
@@ -37,10 +51,12 @@ class ResumeMetadata(BaseModel):
     )
 
     skills: List[str] = Field(
-        default=[], description="List of skills the candidate have"
+        default=[],
+        description="List of unique skills the candidate have mentioned in the resume content",
     )
     certifications: List[str] = Field(
-        default=[], description="List of certifications the candidate have"
+        default=[],
+        description="List of certifications the candidate have mentioned in the resume content",
     )
     experiences: List[CandidateExperience] = Field(default=[], description="")
 
@@ -48,6 +64,19 @@ class ResumeMetadata(BaseModel):
     def lower_case_email(cls, v: str) -> str:
         if isinstance(v, str):
             return v.lower()
+        return v
+
+    @field_validator("skills", mode="before")
+    def unique_skills(cls, v):
+        if isinstance(v, list):
+            seen = set()
+            unique_list = []
+            for skill in v:
+                skill_lower = skill.strip().lower()
+                if skill_lower not in seen:
+                    seen.add(skill_lower)
+                    unique_list.append(skill.strip())
+            return unique_list
         return v
 
 
@@ -117,7 +146,8 @@ class ResumeParser:
     def extract_resume_details(self, content: str) -> ResumeMetadata:
         prompt = (
             "You are a expert in reading a resume of a candidate and extract the relevant information\n"
-            "Below is the content of the resume of the candidate\n\n"
+            "Below is the content of the resume of the candidate\n"
+            "Make sure you capture all the unique skills the candidate has\n"
             "<CONTENT>\n{content}</CONTENT>"
         )
         prompt = prompt.format(content=content)

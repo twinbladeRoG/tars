@@ -4,6 +4,7 @@ from uuid import UUID
 from src.models.models import User
 from src.modules.candidate.controller import CandidateController
 from src.modules.file_storage.controller import FileController
+from src.modules.knowledge_base.controller import KnowledgeBaseController
 
 from .agent import RootAgent
 
@@ -16,11 +17,13 @@ class AgentController:
         self,
         file_controller: FileController,
         candidate_controller: CandidateController,
+        knowledge_base_controller: KnowledgeBaseController,
         user: User,
     ):
         agent = self.agent.compile(
             file_controller=file_controller,
             candidate_controller=candidate_controller,
+            knowledge_base_controller=knowledge_base_controller,
             user=user,
         )
         mermaid = agent.get_graph(xray=True).draw_mermaid()
@@ -35,6 +38,7 @@ class AgentController:
         *,
         file_controller: FileController,
         candidate_controller: CandidateController,
+        knowledge_base_controller: KnowledgeBaseController,
         conversation_id: Optional[UUID | None] = None,
     ):
         return self.agent.stream(
@@ -43,4 +47,5 @@ class AgentController:
             conversation_id=conversation_id,
             file_controller=file_controller,
             candidate_controller=candidate_controller,
+            knowledge_base_controller=knowledge_base_controller,
         )

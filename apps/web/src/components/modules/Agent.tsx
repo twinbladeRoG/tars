@@ -10,9 +10,10 @@ import { v4 as uuid } from 'uuid';
 import { getToken } from '@/apis/http';
 import { useAgentWorkflow } from '@/apis/queries/agent.queries';
 import { cn } from '@/lib/utils';
-import type { ICandidate, IFile } from '@/types';
+import type { ICandidate, ICandidateWithResume, IFile } from '@/types';
 
 import CandidateDetails from './candidate/CandidateDetails';
+import ResumeCandidateDetails from './candidate/ResumeCandidateDetails';
 import KnowledgeBaseDetails from './knowledge-base/KnowledgeBaseDetails';
 import AgentGraph from './AgentGraph';
 import ChatInput from './ChatInput';
@@ -147,6 +148,7 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
 
   const [file, setFile] = useState<IFile | null>(null);
   const [candidate, setCandidate] = useState<ICandidate | null>(null);
+  const [resumeCandidate, setResumeCandidate] = useState<ICandidateWithResume | null>(null);
 
   const handleSelectCitation = (file: IFile) => {
     setFile(file);
@@ -156,6 +158,11 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
   const handleSelectCandidate = (candidate: ICandidate) => {
     setCandidate(candidate);
     setTab('candidate');
+  };
+
+  const handleSelectResumeCandidate = (candidate: ICandidateWithResume) => {
+    setResumeCandidate(candidate);
+    setTab('resume-candidate');
   };
 
   return (
@@ -187,6 +194,7 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
                 {...message}
                 onClickCandidate={handleSelectCandidate}
                 onClickCitation={handleSelectCitation}
+                onClickResumeCandidate={handleSelectResumeCandidate}
               />
             ))}
           </div>
@@ -228,6 +236,12 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
 
         <Tabs.Panel value="candidate" className="p-4">
           {candidate ? <CandidateDetails className="" candidate={candidate} /> : null}
+        </Tabs.Panel>
+
+        <Tabs.Panel value="resume-candidate" className="p-4">
+          {resumeCandidate ? (
+            <ResumeCandidateDetails className="" candidate={resumeCandidate} />
+          ) : null}
         </Tabs.Panel>
       </Tabs>
     </section>

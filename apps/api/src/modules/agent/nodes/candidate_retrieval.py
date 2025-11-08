@@ -23,7 +23,7 @@ class CandidateRetrievalNode:
             ),
             query=Document(text=str(query), model="colbert-ir/colbertv2.0"),
             using="colbert",
-            limit=10,
+            limit=5,
         ).points
 
         logger.debug(

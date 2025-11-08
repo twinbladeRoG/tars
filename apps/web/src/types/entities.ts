@@ -96,3 +96,8 @@ export interface ICandidateWithKnowledgeBase extends ICandidate {
 export interface ICandidateWithScore extends ICandidate {
   score: number;
 }
+
+export interface ICandidateWithResume extends ICandidate {
+  knowledge_base_document: IKnowledgeBaseDocument;
+  chunks: Array<string>;
+}

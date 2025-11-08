@@ -6,6 +6,7 @@ from src.core.factory.factory import (
     AgentControllerDeps,
     CandidateControllerDeps,
     FileControllerDeps,
+    KnowledgeBaseControllerDeps,
 )
 
 from .schema import AgentChatRequest, AgentWorkflowResponse
@@ -19,10 +20,12 @@ def get_agent(
     agent_controller: AgentControllerDeps,
     file_controller: FileControllerDeps,
     candidate_controller: CandidateControllerDeps,
+    knowledge_base_controller: KnowledgeBaseControllerDeps,
 ):
     state, mermaid = agent_controller.get_workflow(
         file_controller=file_controller,
         candidate_controller=candidate_controller,
+        knowledge_base_controller=knowledge_base_controller,
         user=user,
     )
     return AgentWorkflowResponse(mermaid=mermaid, state=state)
@@ -35,6 +38,7 @@ def chat(
     agent_controller: AgentControllerDeps,
     file_controller: FileControllerDeps,
     candidate_controller: CandidateControllerDeps,
+    knowledge_base_controller: KnowledgeBaseControllerDeps,
 ):
     return StreamingResponse(
         agent_controller.stream(
@@ -43,6 +47,7 @@ def chat(
             user_message=body.message,
             file_controller=file_controller,
             candidate_controller=candidate_controller,
+            knowledge_base_controller=knowledge_base_controller,
         ),
         headers={
             "Cache-Control": "no-cache",

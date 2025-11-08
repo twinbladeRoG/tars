@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { Accordion, ActionIcon, Badge, Button, Loader, Skeleton } from '@mantine/core';
+import { Accordion, ActionIcon, Badge, Button, Loader, Skeleton, Text } from '@mantine/core';
 import { useClipboard } from '@mantine/hooks';
 import Markdown from 'marked-react';
 
 import { cn } from '@/lib/utils';
-import type { ICandidate, IFile } from '@/types';
+import type { ICandidate, ICandidateWithResume, IFile } from '@/types';
 
 import renderer from '../markdown';
 
@@ -20,6 +20,7 @@ interface SplitMessage {
 export interface ChatMessageProps extends IMessage {
   onClickCitation: (file: IFile) => void;
   onClickCandidate: (candidate: ICandidate) => void;
+  onClickResumeCandidate: (candidate: ICandidateWithResume) => void;
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
@@ -31,8 +32,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   role,
   citations,
   candidates,
+  resumeCandidates,
   onClickCitation,
   onClickCandidate,
+  onClickResumeCandidate,
 }) => {
   const isUser = role === 'user';
   // for reasoning model, we split the message into content and thought
@@ -78,7 +81,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
   return (
     <div
-      className={cn('flex max-w-[80%] flex-col', {
+      className={cn('flex max-w-[90%] flex-col', {
         'self-end': isUser,
         'self-start': !isUser,
         'bg-red-950': isError,
@@ -123,31 +126,64 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         ) : null}
 
         {candidates && candidates.length > 0 ? (
-          <div className="my-4 flex flex-wrap gap-2">
-            {candidates?.map((candidate) => (
-              <Button
-                key={candidate.id}
-                variant="light"
-                leftSection={<Icon icon="mdi:person-card-details" />}
-                rightSection={<Badge size="xs">{candidate.score.toFixed(2)}</Badge>}
-                onClick={() => onClickCandidate(candidate)}>
-                <p className="whitespace-nowrap">{candidate.name}</p>
-              </Button>
-            ))}
+          <div className="mt-2">
+            <Text size="xs" mb="xs">
+              Candidates
+            </Text>
+            <div className="flex flex-wrap gap-2">
+              {candidates?.map((candidate) => (
+                <Button
+                  size="xs"
+                  key={candidate.id}
+                  variant="light"
+                  leftSection={<Icon icon="mdi:person-card-details" />}
+                  rightSection={<Badge size="xs">{candidate.score.toFixed(2)}</Badge>}
+                  onClick={() => onClickCandidate(candidate)}>
+                  <p className="whitespace-nowrap">{candidate.name}</p>
+                </Button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {resumeCandidates && resumeCandidates.length > 0 ? (
+          <div className="mt-2">
+            <Text size="xs" mb="xs">
+              Resume Candidates
+            </Text>
+            <div className="flex flex-wrap gap-2">
+              {resumeCandidates?.map((candidate) => (
+                <Button
+                  size="xs"
+                  key={candidate.id}
+                  variant="light"
+                  color="teal.2"
+                  leftSection={<Icon icon="mdi:person-card-details" />}
+                  onClick={() => onClickResumeCandidate(candidate)}>
+                  <p className="whitespace-nowrap">{candidate.name}</p>
+                </Button>
+              ))}
+            </div>
           </div>
         ) : null}
 
         {citations && citations.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {citations?.map((citation) => (
-              <Button
-                key={citation.id}
-                variant="light"
-                color="teal.2"
-                onClick={() => onClickCitation(citation)}>
-                <p className="whitespace-nowrap">{citation.original_filename}</p>
-              </Button>
-            ))}
+          <div className="mt-2">
+            <Text size="xs" mb="xs">
+              Citations
+            </Text>
+            <div className="flex flex-wrap gap-2">
+              {citations?.map((citation) => (
+                <Button
+                  size="xs"
+                  key={citation.id}
+                  variant="light"
+                  color="teal.2"
+                  onClick={() => onClickCitation(citation)}>
+                  <p className="whitespace-nowrap">{citation.original_filename}</p>
+                </Button>
+              ))}
+            </div>
           </div>
         ) : null}
       </div>

@@ -111,7 +111,7 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
                     chunk_overlap=256,
                 )
                 texts = text_splitter.split_text(doc.knowledge_base_document.content)
-                embeddings = create_embedding(input="texts")
+                embeddings = create_embedding(input=texts)
 
                 self._remove_file_from_vector_db(
                     file_id=doc.id.hex,

@@ -67,5 +67,11 @@ class CandidateWithKnowledgeBase(BaseModelMixin, KnowledgeBaseDocumentBase):
 
 
 class CandidateWithScore(BaseModelMixin, CandidateBase):
-    score: float
     knowledge_base_document_id: UUID
+    score: float
+
+
+class CandidateWithResume(BaseModelMixin, CandidateBase):
+    knowledge_base_document_id: UUID
+    knowledge_base_document: KnowledgeBaseDocument
+    chunks: list[str]

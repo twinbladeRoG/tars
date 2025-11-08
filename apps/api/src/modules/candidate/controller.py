@@ -56,9 +56,9 @@ class CandidateController(BaseController[Candidate]):
         does_exists = self.vector_db.collection_exists(collection_name)
 
         if does_exists:
-            logger.info(f"Collection '{collection_name}' already exists")
+            logger.debug(f"Collection '{collection_name}' already exists")
         else:
-            logger.info(f"Collection '{collection_name}' does not exists.")
+            logger.debug(f"Collection '{collection_name}' does not exists.")
 
             self.vector_db.create_collection(
                 collection_name=collection_name,

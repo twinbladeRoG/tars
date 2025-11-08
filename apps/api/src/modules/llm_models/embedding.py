@@ -1,4 +1,5 @@
 from openai import OpenAI
+from openai.types import CreateEmbeddingResponse
 
 from src.core.config import settings
 
@@ -8,7 +9,7 @@ openai = OpenAI(
 )
 
 
-def create_embedding(input: str | list[str]):
+def create_embedding(input: str | list[str]) -> CreateEmbeddingResponse:
     embeddings = openai.embeddings.create(
         input=input,
         model=settings.EMBEDDING_MODEL_NAME,

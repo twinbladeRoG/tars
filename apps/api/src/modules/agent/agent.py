@@ -12,7 +12,7 @@ from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel
 
 from src.core.logger import logger
-from src.models.models import Candidate, User
+from src.models.models import CandidateWithResume, CandidateWithScore, User
 from src.modules.candidate.controller import CandidateController
 from src.modules.file_storage.controller import FileController
 from src.modules.knowledge_base.controller import KnowledgeBaseController
@@ -34,6 +34,7 @@ class RootAgent:
         *,
         file_controller: FileController,
         candidate_controller: CandidateController,
+        knowledge_base_controller: KnowledgeBaseController,
         user: User,
     ):
         if self.agent is not None:
@@ -55,6 +56,7 @@ class RootAgent:
             CitationNode(
                 file_controller=file_controller,
                 candidate_controller=candidate_controller,
+                knowledge_base_controller=knowledge_base_controller,
             ),
         )
         agent_builder.add_node(
@@ -83,12 +85,14 @@ class RootAgent:
         user_message: str,
         file_controller: FileController,
         candidate_controller: CandidateController,
+        knowledge_base_controller: KnowledgeBaseController,
         conversation_id: Optional[UUID | None] = None,
     ):
         try:
             agent = self.compile(
                 file_controller=file_controller,
                 candidate_controller=candidate_controller,
+                knowledge_base_controller=knowledge_base_controller,
                 user=user,
             )
 
@@ -112,9 +116,10 @@ class RootAgent:
                 "messages": messages,
                 "llm_calls": 0,
                 "citations": [],
-                "retrieved_points": [],
-                "candidates": [],
+                "resume_retrieved_points": [],
                 "candidate_retrieved_points": [],
+                "candidates": [],
+                "resume_candidates": [],
             }
 
             events = agent.stream(
@@ -132,15 +137,18 @@ class RootAgent:
 
                     state = agent.get_state(config)
                     if len(state.next) != 0:
-                        logger.debug(f"Current Node: {state.next[0]}")
+                        logger.debug(f"Current Node: {state.next}")
                         yield f"event: node\ndata: {state.next[0]}\n\n"
 
                     messages = event_value.get("messages", [])
                     citations: Optional[list[BaseModel]] = event_value.get(
                         "citations", None
                     )
-                    candidates: Optional[list[Candidate]] = event_value.get(
+                    candidates: Optional[list[CandidateWithScore]] = event_value.get(
                         "candidates", None
+                    )
+                    resume_candidates: Optional[list[CandidateWithResume]] = (
+                        event_value.get("resume_candidates", None)
                     )
 
                     if citations:
@@ -152,6 +160,13 @@ class RootAgent:
                         yield f"event: candidates\ndata: {
                             json.dumps(
                                 [c.model_dump() for c in candidates], default=str
+                            )
+                        }\n\n"
+
+                    if resume_candidates:
+                        yield f"event: resume_candidates\ndata: {
+                            json.dumps(
+                                [c.model_dump() for c in resume_candidates], default=str
                             )
                         }\n\n"
 

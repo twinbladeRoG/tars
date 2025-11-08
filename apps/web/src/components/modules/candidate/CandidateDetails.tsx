@@ -100,7 +100,17 @@ const CandidateDetails: React.FC<CandidateDetailsProps> = ({ candidate, classNam
                 </Badge>
               ))}
             </div>
-            <Text size="xs">{exp.additional_info}</Text>
+            <ul className="list-inside list-disc">
+              {exp.additional_info
+                ?.split('.')
+                .map((i) => i.trim())
+                .filter((i) => !!i)
+                .map((i) => (
+                  <Text component="li" key={i} size="xs">
+                    {i}
+                  </Text>
+                ))}
+            </ul>
           </Card>
         ))}
       </div>

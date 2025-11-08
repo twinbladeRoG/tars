@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
-import { ActionIcon, Text } from '@mantine/core';
+import { ActionIcon, Modal, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useQueryClient } from '@tanstack/react-query';
@@ -41,8 +42,18 @@ const KnowledgeBaseActions: React.FC<KnowledgeBaseActionsProps> = ({ knowledgeBa
     await queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
   };
 
+  const [opened, handler] = useDisclosure(false);
+
   return (
     <div className="flex justify-end gap-2">
+      <ActionIcon variant="light" color="cyan" onClick={handler.open}>
+        <Icon icon="mdi:eye" />
+      </ActionIcon>
+
+      <Modal opened={opened} onClose={handler.close} size="80%">
+        <Text>{knowledgeBase.content}</Text>
+      </Modal>
+
       {knowledgeBase.task_id ? (
         <ActionIcon
           variant="light"

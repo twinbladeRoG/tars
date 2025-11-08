@@ -1,4 +1,4 @@
-import type { ICandidateWithScore, IFile } from '@/types';
+import type { ICandidateWithResume, ICandidateWithScore, IFile } from '@/types';
 
 export interface IMessage {
   id: string;
@@ -10,4 +10,5 @@ export interface IMessage {
   isStreaming?: boolean;
   citations?: Array<IFile>;
   candidates?: Array<ICandidateWithScore>;
+  resumeCandidates?: Array<ICandidateWithResume>;
 }

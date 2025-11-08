@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { type EventSourceMessage } from '@microsoft/fetch-event-source';
 
-import type { ICandidateWithScore, IFile } from '@/types';
+import type { ICandidateWithResume, ICandidateWithScore, IFile } from '@/types';
 
 import type { IMessage } from './types';
 
@@ -29,8 +29,18 @@ const useChatMessages = () => {
           }
         | undefined
     ) => {
+      function safeJSONParse(value: string | null | undefined) {
+        if (!value) return value;
+
+        try {
+          return JSON.parse(value) as unknown;
+        } catch {
+          return value;
+        }
+      }
+
       // eslint-disable-next-line no-console
-      console.log('Event:', message.event, message.data);
+      console.log('Event:', message.event, safeJSONParse(message.data));
 
       switch (message.event) {
         case 'conversationId': {
@@ -66,6 +76,22 @@ const useChatMessages = () => {
               } satisfies IMessage;
             })
           );
+          break;
+        }
+
+        case 'resume_candidates': {
+          const data = JSON.parse(message.data) as Array<ICandidateWithResume>;
+          setMessages((prev) =>
+            prev.map((message) => {
+              if (message.id !== botMessageId) return message;
+
+              return {
+                ...message,
+                resumeCandidates: data,
+              } satisfies IMessage;
+            })
+          );
+          break;
           break;
         }
 

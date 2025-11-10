@@ -12,3 +12,4 @@ class AgentWorkflowResponse(SQLModel):
 class AgentChatRequest(SQLModel):
     message: str = Field(min_length=1)
     conversation_id: Optional[UUID] = None
+    candidate_id: Optional[UUID] = None

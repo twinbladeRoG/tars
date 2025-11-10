@@ -39,12 +39,14 @@ class AgentController:
         file_controller: FileController,
         candidate_controller: CandidateController,
         knowledge_base_controller: KnowledgeBaseController,
-        conversation_id: Optional[UUID | None] = None,
+        conversation_id: Optional[UUID] = None,
+        candidate_id: Optional[UUID] = None,
     ):
         return self.agent.stream(
             user=user,
             user_message=user_message,
             conversation_id=conversation_id,
+            candidate_id=candidate_id,
             file_controller=file_controller,
             candidate_controller=candidate_controller,
             knowledge_base_controller=knowledge_base_controller,

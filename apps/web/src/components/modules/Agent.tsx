@@ -16,6 +16,7 @@ import CandidateDetails from './candidate/CandidateDetails';
 import ResumeCandidateDetails from './candidate/ResumeCandidateDetails';
 import KnowledgeBaseDetails from './knowledge-base/KnowledgeBaseDetails';
 import AgentGraph from './AgentGraph';
+import CandidateSelectForm from './CandidateSelectForm';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
 import useChatMessages from './hook';
@@ -34,6 +35,26 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
   const [isStreaming, setIsStreaming] = useState(false);
   const [tab, setTab] = useState<string | null>('graph');
 
+  const [file, setFile] = useState<IFile | null>(null);
+  const [candidate, setCandidate] = useState<ICandidate | undefined>(undefined);
+  const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
+  const [resumeCandidate, setResumeCandidate] = useState<ICandidateWithResume | null>(null);
+
+  const handleSelectCitation = (file: IFile) => {
+    setFile(file);
+    setTab('citations');
+  };
+
+  const handleSelectCandidate = (candidate: ICandidate) => {
+    setCandidate(candidate);
+    setTab('candidate');
+  };
+
+  const handleSelectResumeCandidate = (candidate: ICandidateWithResume) => {
+    setResumeCandidate(candidate);
+    setTab('resume-candidate');
+  };
+
   const {
     messages,
     setMessages,
@@ -43,9 +64,14 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
     visitedNodes,
     appendVisitedNode,
     setVisitedNodes,
+    candidates,
   } = useChatMessages();
 
-  const handleSubmit = async (message: string, hasInterrupt: boolean = false) => {
+  const handleSubmit = async (
+    message: string,
+    hasInterrupt: boolean = false,
+    candidateId: string | undefined = undefined
+  ) => {
     const botMessageId = uuid();
     setIsStreaming(true);
     setVisitedNodes([]);
@@ -81,6 +107,7 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
         message: messageToSent,
         conversation_id: conversationId,
         interrupt_response: hasInterrupt ? { message: message } : undefined,
+        candidate_id: candidateId ?? selectedCandidateId,
       }),
       signal: ctrl.signal,
       // eslint-disable-next-line @typescript-eslint/require-await
@@ -134,6 +161,11 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
     });
   };
 
+  const handleSelectCandidateId = async (candidateId: string) => {
+    setSelectedCandidateId(candidateId);
+    await handleSubmit('Provide short and brief summary of the candidate', false, candidateId);
+  };
+
   useLayoutEffect(() => {
     scrollRef.current!.scrollTo({
       top: scrollRef.current!.scrollHeight,
@@ -144,25 +176,6 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
   const handleClearConversation = () => {
     setMessages([]);
     setConversationId(null);
-  };
-
-  const [file, setFile] = useState<IFile | null>(null);
-  const [candidate, setCandidate] = useState<ICandidate | null>(null);
-  const [resumeCandidate, setResumeCandidate] = useState<ICandidateWithResume | null>(null);
-
-  const handleSelectCitation = (file: IFile) => {
-    setFile(file);
-    setTab('citations');
-  };
-
-  const handleSelectCandidate = (candidate: ICandidate) => {
-    setCandidate(candidate);
-    setTab('candidate');
-  };
-
-  const handleSelectResumeCandidate = (candidate: ICandidateWithResume) => {
-    setResumeCandidate(candidate);
-    setTab('resume-candidate');
   };
 
   return (
@@ -197,6 +210,14 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
                 onClickResumeCandidate={handleSelectResumeCandidate}
               />
             ))}
+
+            {!selectedCandidateId ? (
+              <CandidateSelectForm
+                candidates={candidates}
+                onSubmit={handleSelectCandidateId}
+                isStreaming={isStreaming}
+              />
+            ) : null}
           </div>
         </ScrollArea.Autosize>
 

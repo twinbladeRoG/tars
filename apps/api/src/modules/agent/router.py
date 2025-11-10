@@ -45,6 +45,7 @@ def chat(
             user=user,
             conversation_id=body.conversation_id,
             user_message=body.message,
+            candidate_id=body.candidate_id,
             file_controller=file_controller,
             candidate_controller=candidate_controller,
             knowledge_base_controller=knowledge_base_controller,

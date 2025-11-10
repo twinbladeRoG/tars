@@ -17,17 +17,22 @@ from src.modules.candidate.controller import CandidateController
 from src.modules.file_storage.controller import FileController
 from src.modules.knowledge_base.controller import KnowledgeBaseController
 
+from .nodes.agent import AgentNode
 from .nodes.candidate_retrieval import CandidateRetrievalNode
 from .nodes.chatbot import ChatBotNode
 from .nodes.citations import CitationNode
+from .nodes.parallel_retrieval import ParallelRetrievalNode
 from .nodes.resume_retrieval import ResumeRetrievalNode
+from .nodes.scope_checker import ScopeCheckerNode
 from .state import AgentState
+
+memory = MemorySaver()
 
 
 class RootAgent:
     def __init__(self) -> None:
-        self.memory = MemorySaver()
         self.agent = None
+        self.memory = memory
 
     def compile(
         self,
@@ -65,14 +70,28 @@ class RootAgent:
                 collection_name=CandidateController._get_collection_name(user)
             ),
         )
+        # agent_builder.add_node("scope_checker", ScopeCheckerNode())
+        agent_builder.add_node("parallel_retrieval", ParallelRetrievalNode())
+        agent_builder.add_node(
+            "agent", AgentNode(candidate_controller=candidate_controller)
+        )
 
         # Add Edges
-        agent_builder.add_edge(START, "resume_retrieval")
-        agent_builder.add_edge(START, "candidate_retrieval")
+        # agent_builder.add_edge(START, "scope_checker")
+        agent_builder.add_conditional_edges(
+            START,
+            ScopeCheckerNode(),
+            {True: "agent", False: "parallel_retrieval"},
+        )
+
+        agent_builder.add_edge("parallel_retrieval", "resume_retrieval")
+        agent_builder.add_edge("parallel_retrieval", "candidate_retrieval")
         agent_builder.add_edge("resume_retrieval", "citations")
         agent_builder.add_edge("candidate_retrieval", "citations")
         agent_builder.add_edge("citations", "chatbot")
         agent_builder.add_edge("chatbot", END)
+
+        agent_builder.add_edge("agent", END)
 
         agent = agent_builder.compile(checkpointer=self.memory)
         self.agent = agent
@@ -86,7 +105,8 @@ class RootAgent:
         file_controller: FileController,
         candidate_controller: CandidateController,
         knowledge_base_controller: KnowledgeBaseController,
-        conversation_id: Optional[UUID | None] = None,
+        conversation_id: Optional[UUID] = None,
+        candidate_id: Optional[UUID] = None,
     ):
         try:
             agent = self.compile(
@@ -112,6 +132,7 @@ class RootAgent:
             )
 
             messages: list[AnyMessage] = [HumanMessage(content=user_message)]
+
             agent_state: AgentState = {
                 "messages": messages,
                 "llm_calls": 0,
@@ -120,6 +141,7 @@ class RootAgent:
                 "candidate_retrieved_points": [],
                 "candidates": [],
                 "resume_candidates": [],
+                "candidate_id": candidate_id.hex if candidate_id else None,
             }
 
             events = agent.stream(
@@ -128,7 +150,7 @@ class RootAgent:
                 stream_mode="updates",
             )
 
-            yield f"event: node\ndata: resume_retrieval\n\n"
+            yield f"event: node\ndata: __start__\n\n"
 
             for event in events:
                 for node, event_value in event.items():
@@ -139,6 +161,9 @@ class RootAgent:
                     if len(state.next) != 0:
                         logger.debug(f"Current Node: {state.next}")
                         yield f"event: node\ndata: {state.next[0]}\n\n"
+
+                    if event_value is None:
+                        continue
 
                     messages = event_value.get("messages", [])
                     citations: Optional[list[BaseModel]] = event_value.get(

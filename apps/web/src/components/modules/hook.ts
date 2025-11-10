@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { type EventSourceMessage } from '@microsoft/fetch-event-source';
 
-import type { ICandidateWithResume, ICandidateWithScore, IFile } from '@/types';
+import type { ICandidate, ICandidateWithResume, ICandidateWithScore, IFile } from '@/types';
 
 import type { IMessage } from './types';
 
@@ -9,6 +9,7 @@ const useChatMessages = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [visitedNodes, setVisitedNodes] = useState<string[]>([]);
+  const [candidates, setCandidates] = useState<Array<ICandidate>>([]);
 
   const appendVisitedNode = (node: string) => {
     setVisitedNodes((previousNodes) => {
@@ -76,6 +77,17 @@ const useChatMessages = () => {
               } satisfies IMessage;
             })
           );
+
+          setCandidates((prevCandidates) => {
+            const ids = prevCandidates.map((i) => i.id);
+            const items: Array<ICandidate> = [...prevCandidates];
+
+            data.forEach((c) => {
+              if (!ids.includes(c.id)) items.push(c);
+            });
+
+            return items;
+          });
           break;
         }
 
@@ -91,7 +103,17 @@ const useChatMessages = () => {
               } satisfies IMessage;
             })
           );
-          break;
+
+          setCandidates((prevCandidates) => {
+            const ids = prevCandidates.map((i) => i.id);
+            const items: Array<ICandidate> = [...prevCandidates];
+
+            data.forEach((c) => {
+              if (!ids.includes(c.id)) items.push(c);
+            });
+
+            return items;
+          });
           break;
         }
 
@@ -191,6 +213,7 @@ const useChatMessages = () => {
     visitedNodes,
     appendVisitedNode,
     setVisitedNodes,
+    candidates,
   } as const;
 };
 

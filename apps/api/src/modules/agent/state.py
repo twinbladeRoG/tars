@@ -17,3 +17,4 @@ class AgentState(TypedDict):
     citations: Optional[list[BaseModel]]
     candidates: Optional[list[CandidateWithScore]]
     resume_candidates: Optional[list[CandidateWithResume]]
+    candidate_id: Optional[str]

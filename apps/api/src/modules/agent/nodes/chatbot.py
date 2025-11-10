@@ -34,13 +34,13 @@ class ChatBotNode:
                     CandidateExperience(**exp) for exp in candidate.experiences
                 ]
                 candidate_text = (
-                    f"{candidate.name}\n"
-                    f"{candidate.email}\n"
-                    f"{candidate.contact}\n"
-                    f"{candidate.years_of_experience} years of experience\n"
-                    f"{', '.join(candidate.skills)}\n"
-                    f"{', '.join(candidate.certifications)}\n"
-                    f"{'\n'.join(CandidateController._get_experience_texts(experiences))}\n"
+                    f"Name: {candidate.name}\n"
+                    f"Email: {candidate.email}\n"
+                    f"Contact: {candidate.contact}\n"
+                    f"Years of experience: {candidate.years_of_experience}\n"
+                    f"Skills: {', '.join(candidate.skills)}\n"
+                    f"Certifications: {', '.join(candidate.certifications)}\n"
+                    f"Experiences: {'\n'.join(CandidateController._get_experience_texts(experiences))}\n"
                 )
                 retrieved_candidates += candidate_text + "\n\n"
 
@@ -48,6 +48,7 @@ class ChatBotNode:
         You are an expert in recruitment.
         You will be given retrieved chunks from resumes and candidate profiles matching the user query.
         Suggest the user the best candidate suitable for the job description.
+        Always give priority to the "Retrieved Candidates" section, then look into the "Retrieved Chunks from Resumes" section for more information
 
         <Retrieved Candidates>
         {retrieved_candidates}

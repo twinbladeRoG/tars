@@ -1,12 +1,11 @@
-from typing import Literal, Optional
+from typing import Optional
 
 from src.core.config import settings
 
 from .azure_openai import llm as azure_openai
 from .deepseek import llm as deepseek
 from .open_ai import llm as openai
-
-type LlmModelName = Literal["gpt-4o", "deepseek-r1", "azure-gpt-4o"]
+from .types import LlmModelName
 
 
 class LlmModelFactory:

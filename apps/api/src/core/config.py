@@ -13,6 +13,8 @@ from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Self
 
+from src.modules.llm_models.types import EmbeddingProvider, LlmModelName
+
 
 def parse_cors(v: Any) -> list[str] | str:
     if isinstance(v, str) and not v.startswith("["):
@@ -86,7 +88,8 @@ class Settings(BaseSettings):
     AZURE_OPEN_AI_ENDPOINT: str = ""
     AZURE_OPEN_AI_VERSION: str = ""
 
-    DEFAULT_LLM: Literal["gpt-4o", "deepseek-r1", "azure-gpt-4o"] = "azure-gpt-4o"
+    DEFAULT_LLM: LlmModelName = "azure-gpt-4o"
+    DEFAULT_EMBEDDING_MODEL: EmbeddingProvider = "azure-openai"
 
     VECTOR_DB_URL: str = "http://localhost:6333"
 

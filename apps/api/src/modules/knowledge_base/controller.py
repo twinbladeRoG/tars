@@ -25,7 +25,7 @@ from src.core.exception import BadRequestException, NotFoundException
 from src.core.logger import logger
 from src.models.models import File, KnowledgeBaseDocument, User
 from src.modules.candidate.controller import CandidateController
-from src.modules.llm_models.embedding import create_embedding
+from src.modules.llm_models.embedding import create_embedding, get_embedding_size
 
 from .repository import KnowledgeBaseDocumentRepository
 
@@ -82,7 +82,9 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
 
             self.vector_db.create_collection(
                 collection_name=collection_name,
-                vectors_config=VectorParams(size=1024, distance=Distance.COSINE),
+                vectors_config=VectorParams(
+                    size=get_embedding_size(), distance=Distance.COSINE
+                ),
             )
 
     @staticmethod
@@ -107,7 +109,7 @@ class KnowledgeBaseController(BaseController[KnowledgeBaseDocument]):
         for doc in files:
             if doc.knowledge_base_document and doc.knowledge_base_document.content:
                 text_splitter = RecursiveCharacterTextSplitter(
-                    chunk_size=1024,
+                    chunk_size=get_embedding_size(),
                     chunk_overlap=256,
                 )
                 texts = text_splitter.split_text(doc.knowledge_base_document.content)

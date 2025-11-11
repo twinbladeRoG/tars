@@ -1,2 +1,12 @@
+# Abort commit if there are unstaged changes
+if ! git diff --quiet; then
+    echo "❌ Error: You have unstaged changes. Please stage them before committing."
+    git diff --name-only
+    exit 1
+fi
+
+echo "✅ No unstaged changes. Proceeding..."
+
+pnpm -F api format
 pnpm check-types
 pnpm lint

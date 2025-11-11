@@ -88,7 +88,7 @@ const CandidateDetails: React.FC<CandidateDetailsProps> = ({ candidate, classNam
               Start Date: {exp.start_date ? dayjs(exp.start_date).format('DD MMM, YYYY') : 'N/A'}
             </Text>
             <Text size="xs">
-              End Date: {exp.end_date ? dayjs(exp.end_date).format('DD MMM, YY') : 'N/A'}
+              End Date: {exp.end_date ? dayjs(exp.end_date).format('DD MMM, YYYY') : 'N/A'}
             </Text>
             <Text size="xs" mb="xs">
               Duration: {formatMonths(exp.months_in_experience ?? 0)}

@@ -15,8 +15,12 @@ class CandidateExperience(BaseModel):
         description="Number of months the candidate worked in a company", default=None
     )
     company: str = Field(description="Name of the company the candidate has worked at")
-    start_date: datetime = Field(description="Start date at the company")
-    end_data: Optional[datetime] = Field(description="End date at the company")
+    start_date: datetime = Field(
+        description="Start date or Joining date at the company in ISO datetime string (e.g., '2025-02-10T15:00:00')"
+    )
+    end_date: Optional[datetime] = Field(
+        description="End date or Last working date at the company in ISO datetime string (e.g., '2025-02-10T15:00:00')"
+    )
     skills: Optional[str] = Field(
         description="Comma separated list of unique skill at the company"
     )

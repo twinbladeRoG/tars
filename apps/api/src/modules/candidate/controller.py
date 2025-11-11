@@ -182,7 +182,7 @@ class CandidateController(BaseController[Candidate]):
             text = (
                 f"{experience.role}\n"
                 f"{experience.company}\n"
-                f"{experience.start_date.isoformat()} - {experience.end_data.isoformat() if experience.end_data else 'N/A'}\n"
+                f"{experience.start_date.isoformat()} - {experience.end_date.isoformat() if experience.end_date else 'N/A'}\n"
                 f"{experience.months_in_experience} months experience\n"
                 f"{experience.additional_info}"
             )

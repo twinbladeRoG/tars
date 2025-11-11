@@ -86,6 +86,8 @@ class Settings(BaseSettings):
     AZURE_OPEN_AI_ENDPOINT: str = ""
     AZURE_OPEN_AI_VERSION: str = ""
 
+    DEFAULT_LLM: Literal["gpt-4o", "deepseek-r1", "azure-gpt-4o"] = "azure-gpt-4o"
+
     VECTOR_DB_URL: str = "http://localhost:6333"
 
     REDIS_URL: str = "redis://localhost:6379"

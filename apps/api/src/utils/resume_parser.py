@@ -83,7 +83,7 @@ class ResumeMetadata(BaseModel):
 class ResumeParser:
     def __init__(self):
         self.model_factory = LlmModelFactory()
-        self.llm = self.model_factory.get_model("gpt-4o")
+        self.llm = self.model_factory.get_model()
 
     @staticmethod
     def extract_email_from_resume(text: str):

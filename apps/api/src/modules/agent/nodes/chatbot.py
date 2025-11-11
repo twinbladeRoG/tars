@@ -11,7 +11,7 @@ from ..state import AgentState
 class ChatBotNode:
     def __init__(self):
         self.model_factory = LlmModelFactory()
-        self.llm = self.model_factory.get_model("gpt-4o")
+        self.llm = self.model_factory.get_model()
         self.llm = self.llm.bind_tools([])
 
     def __call__(self, state: AgentState):

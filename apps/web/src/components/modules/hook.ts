@@ -19,6 +19,10 @@ const useChatMessages = () => {
     });
   };
 
+  const clearCandidates = () => {
+    setCandidates([]);
+  };
+
   const updateMessage = useCallback(
     (
       message: EventSourceMessage,
@@ -214,6 +218,7 @@ const useChatMessages = () => {
     appendVisitedNode,
     setVisitedNodes,
     candidates,
+    clearCandidates,
   } as const;
 };
 

@@ -7,17 +7,20 @@ import * as yup from 'yup';
 
 import { cn } from '@/lib/utils';
 
+import { ShineBorder } from '../ui/shine-border';
+
 interface ChatInputProps {
   className?: string;
   onSubmit?: (message: string) => void;
   disabled?: boolean;
+  isStreaming?: boolean;
 }
 
 const schema = yup.object({
   message: yup.string().required('Required'),
 });
 
-const ChatInput: React.FC<ChatInputProps> = ({ className, onSubmit, disabled }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ className, onSubmit, disabled, isStreaming }) => {
   const form = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -39,8 +42,15 @@ const ChatInput: React.FC<ChatInputProps> = ({ className, onSubmit, disabled }) 
 
   return (
     <form
-      className={cn(className, 'flex items-start gap-x-3 rounded-xl bg-slate-950 p-4 shadow')}
+      className={cn(
+        className,
+        'relative flex items-start gap-x-3 rounded-lg border bg-white p-4 dark:bg-slate-950'
+      )}
       onSubmit={handleSubmit}>
+      {isStreaming && (
+        <ShineBorder borderWidth={2} shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']} />
+      )}
+
       <Controller
         control={form.control}
         name="message"
@@ -52,7 +62,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ className, onSubmit, disabled }) 
             minRows={2}
             maxRows={6}
             {...field}
-            name="message"
             onKeyDown={handleKeyDown}
             disabled={disabled}
             placeholder="Ask anything"

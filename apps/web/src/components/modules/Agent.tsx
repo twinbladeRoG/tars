@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { Icon } from '@iconify/react';
-import { ActionIcon, Divider, ScrollArea, Tabs, Tooltip } from '@mantine/core';
+import { ActionIcon, Badge, Divider, ScrollArea, Tabs, Tooltip } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event-source';
 import { ReactFlowProvider } from '@xyflow/react';
@@ -9,6 +9,7 @@ import { v4 as uuid } from 'uuid';
 
 import { getToken } from '@/apis/http';
 import { useAgentWorkflow } from '@/apis/queries/agent.queries';
+import { useCandidate } from '@/apis/queries/candidate.queries';
 import { cn } from '@/lib/utils';
 import type { ICandidate, ICandidateWithResume, IFile } from '@/types';
 
@@ -40,6 +41,8 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
   const [resumeCandidate, setResumeCandidate] = useState<ICandidateWithResume | null>(null);
 
+  const selectedCandidate = useCandidate(selectedCandidateId!);
+
   const handleSelectCitation = (file: IFile) => {
     setFile(file);
     setTab('citations');
@@ -65,6 +68,7 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
     appendVisitedNode,
     setVisitedNodes,
     candidates,
+    clearCandidates,
   } = useChatMessages();
 
   const handleSubmit = async (
@@ -174,15 +178,20 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
   }, [messages]);
 
   const handleClearConversation = () => {
+    clearCandidates();
     setMessages([]);
     setConversationId(null);
+    setSelectedCandidateId(null);
   };
 
   return (
     <section className={cn(className, 'grid grid-cols-[1fr_380px] gap-4')}>
       <div className="flex w-full flex-col overflow-y-auto">
         <div className="flex w-full items-center gap-4">
-          <h1 className="font-bold">Agent Chat</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="font-bold">Agent Chat</h1>
+            {selectedCandidate.data ? <Badge>{selectedCandidate.data?.name}</Badge> : null}
+          </div>
 
           <Tooltip label="New Conversation">
             <ActionIcon variant="subtle" ml="auto" onClick={handleClearConversation}>
@@ -216,12 +225,18 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
                 candidates={candidates}
                 onSubmit={handleSelectCandidateId}
                 isStreaming={isStreaming}
+                className="max-w-[90%] self-end"
               />
             ) : null}
           </div>
         </ScrollArea.Autosize>
 
-        <ChatInput className="mt-auto" onSubmit={handleSubmit} disabled={isStreaming} />
+        <ChatInput
+          className="mt-auto"
+          onSubmit={handleSubmit}
+          disabled={isStreaming}
+          isStreaming={isStreaming}
+        />
       </div>
 
       <Tabs
@@ -246,7 +261,7 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
         </Tabs.Panel>
 
         <Tabs.Panel value="mermaid">
-          <div className="rounded-2xl border border-amber-400 bg-amber-50/20 py-7">
+          <div className="rounded py-7 dark:bg-amber-50">
             {workflow.data?.mermaid ? <Mermaid>{workflow.data.mermaid}</Mermaid> : null}
           </div>
         </Tabs.Panel>

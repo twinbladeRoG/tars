@@ -4,7 +4,7 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useCallback, useEffect, useMemo } from 'react';
-import { Button } from '@mantine/core';
+import { Button, useMantineColorScheme } from '@mantine/core';
 import {
   Background,
   Controls,
@@ -85,7 +85,7 @@ const AgentNode: React.FC<AgentNodeProps> = ({ data }) => {
   return (
     <div
       className={cn('relative w-full rounded border bg-blue-700/20 px-3 py-2', {
-        'bg-blue-700': data.isVisited,
+        'bg-blue-400 dark:bg-blue-700': data.isVisited,
         'bg-teal-600': isStartNode,
         'bg-emerald-600': isEndNode,
         'bg-green-600': data.isActive && (isStartNode || isEndNode),
@@ -142,6 +142,7 @@ const AgentGraph: React.FC<AgentGraphProps> = ({ graph, visitedNodes }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { getLayoutedElements } = useLayoutedElements();
+  const { colorScheme } = useMantineColorScheme();
 
   useEffect(() => {
     const newNodes = graph.nodes
@@ -222,7 +223,7 @@ const AgentGraph: React.FC<AgentGraphProps> = ({ graph, visitedNodes }) => {
   return (
     <div className="w-full flex-1">
       <ReactFlow
-        colorMode="dark"
+        colorMode={colorScheme === 'dark' ? 'dark' : 'light'}
         nodeTypes={nodeTypes}
         nodes={nodes}
         onNodesChange={onNodesChange}
@@ -242,7 +243,7 @@ const AgentGraph: React.FC<AgentGraphProps> = ({ graph, visitedNodes }) => {
                   'elk.direction': 'DOWN',
                 })
               }>
-              Vertical View
+              Vertical
             </Button>
             <Button
               size="compact-sm"
@@ -252,7 +253,7 @@ const AgentGraph: React.FC<AgentGraphProps> = ({ graph, visitedNodes }) => {
                   'elk.direction': 'RIGHT',
                 })
               }>
-              Horizontal View
+              Horizontal
             </Button>
             <Button
               size="compact-sm"
@@ -261,7 +262,7 @@ const AgentGraph: React.FC<AgentGraphProps> = ({ graph, visitedNodes }) => {
                   'elk.algorithm': 'org.eclipse.elk.mrtree',
                 })
               }>
-              Tree View
+              Tree
             </Button>
           </div>
         </Panel>

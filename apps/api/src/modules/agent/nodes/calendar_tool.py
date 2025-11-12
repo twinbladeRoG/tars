@@ -1,15 +1,12 @@
-from datetime import datetime, time
+from datetime import datetime, time, timezone
 
 from langchain.tools import tool
 
 from src.core.logger import logger
-from src.utils.time import utcnow
-
-current_time = utcnow()
 
 
 def generate_today_slots():
-    today = datetime.now().date()
+    today = datetime.now(timezone.utc).date()
 
     raw_slots = [
         (time(10, 0), time(11, 0)),  # 10-11 AM
@@ -51,13 +48,13 @@ def check_candidate_calendar(date_time: str | None = None):
         )
 
     try:
-        interview_time = datetime.fromisoformat(date_time)
+        interview_time = datetime.fromisoformat(date_time).replace(tzinfo=timezone.utc)
     except ValueError:
         return f"❌ Invalid datetime format: {date_time}. Use ISO format: YYYY-MM-DDTHH:MM:SS"
 
     for slot in time_slots:
-        slot_start = datetime.fromisoformat(slot["from"])
-        slot_end = datetime.fromisoformat(slot["till"])
+        slot_start = datetime.fromisoformat(slot["from"]).replace(tzinfo=timezone.utc)
+        slot_end = datetime.fromisoformat(slot["till"]).replace(tzinfo=timezone.utc)
 
         if slot_start <= interview_time < slot_end:
             return (

@@ -87,7 +87,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       })}>
       <div
         className={cn('mb-2 rounded-lg', {
-          'bg-gray-900 p-4': isUser,
+          'bg-gray-200 p-4 dark:bg-gray-900': isUser,
           'self-start': !isUser,
           'bg-red-950': isError,
           'min-w-3/4': isLoading,
@@ -155,7 +155,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                   size="xs"
                   key={candidate.id}
                   variant="light"
-                  color="teal.2"
+                  color="teal.7"
                   leftSection={<Icon icon="mdi:person-card-details" />}
                   onClick={() => onClickResumeCandidate(candidate)}>
                   <p className="whitespace-nowrap">{candidate.name}</p>

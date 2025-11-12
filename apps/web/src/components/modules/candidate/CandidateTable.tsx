@@ -242,7 +242,7 @@ const CandidateTable = () => {
                     <div className="flex flex-col gap-2">
                       {row.original.experiences.map((exp, index) => (
                         // eslint-disable-next-line @eslint-react/no-array-index-key, react-x/no-array-index-key
-                        <Card bg="gray.9" radius="sm" key={index}>
+                        <Card radius="sm" key={index} className="!bg-gray-200 dark:!bg-gray-900">
                           <Title order={5}>{exp.role}</Title>
                           <Title order={6}>{exp.company}</Title>
                           <Text size="xs">

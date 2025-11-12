@@ -38,7 +38,7 @@ const CandidateSelectForm: React.FC<CandidateSelectFormProps> = ({
 
   return (
     <form
-      className={cn(className, 'flex gap-3 rounded-lg bg-gray-600 p-4')}
+      className={cn(className, 'flex gap-3 rounded-lg bg-gray-300 p-4 dark:bg-gray-600')}
       onSubmit={handleSubmit}>
       <Controller
         control={form.control}

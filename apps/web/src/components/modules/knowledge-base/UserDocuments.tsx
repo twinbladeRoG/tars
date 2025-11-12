@@ -1,10 +1,8 @@
 'use no memo'; // !HOTFIX for TanStack Table with React Compiler - https://github.com/TanStack/table/issues/5567#issuecomment-2442997182
 
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router';
 import { Icon } from '@iconify/react';
 import {
-  Anchor,
   Card,
   Checkbox,
   Divider,
@@ -12,6 +10,7 @@ import {
   Select,
   Skeleton,
   Table,
+  Text,
   Title,
 } from '@mantine/core';
 import {
@@ -67,15 +66,15 @@ const UserDocuments: React.FC<UserDocumentsProps> = ({ className, onEnqueue }) =
       columnHelper.accessor('filename', {
         header: 'File',
         cell: (info) => (
-          <Anchor
-            component={Link}
-            to={`/extraction/${info.row.original.id}`}
-            title={info.getValue()}>
+          <Text title={info.getValue()}>
             <div className="flex items-center gap-2">
-              <Icon icon={getFileIcon(info.row.original.content_type)} className="text-2xl" />
+              <Icon
+                icon={getFileIcon(info.row.original.content_type)}
+                className="text-2xl text-cyan-600"
+              />
               <span className="text-sm">{info.row.original.original_filename}</span>
             </div>
-          </Anchor>
+          </Text>
         ),
       }),
       columnHelper.accessor('content_length', {

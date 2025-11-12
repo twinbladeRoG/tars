@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router';
 
+import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 import { RainbowButton } from '@/components/ui/rainbow-button';
 import { RetroGrid } from '@/components/ui/retro-grid';
 import { SmoothCursor } from '@/components/ui/smooth-cursor';
@@ -16,8 +17,8 @@ const Home = () => {
   };
 
   return (
-    <main>
-      <section className="relative h-dvh w-full bg-white">
+    <main className="dark:bg-dark bg-white">
+      <section className="relative h-dvh w-full">
         <div className="absolute top-1/2 left-1/2 flex -translate-1/2 flex-col items-center">
           <h1 className="mb-6 text-center">
             <span className="pointer-events-none z-10 bg-gradient-to-b from-[#ffd319] via-[#ff2975] to-[#8c1eff] bg-clip-text text-center text-7xl leading-none font-bold tracking-tighter whitespace-pre-wrap text-transparent">
@@ -28,6 +29,8 @@ const Home = () => {
           <div className="flex gap-4">
             <RainbowButton onClick={handleChat}>Chat</RainbowButton>
             <RainbowButton onClick={handleLogin}>Login</RainbowButton>
+
+            <AnimatedThemeToggler />
           </div>
         </div>
         <RetroGrid />

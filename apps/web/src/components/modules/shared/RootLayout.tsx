@@ -19,6 +19,7 @@ import { modals } from '@mantine/modals';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { useActiveUser } from '@/apis/queries/auth.queries';
+import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 
 import AppNavLink from './AppNavLink';
 
@@ -58,7 +59,7 @@ const RootLayout = () => {
         breakpoint: 'md',
         collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
       }}
-      padding={'md'}>
+      padding="md">
       <AppShell.Header>
         <Group h="100%" px="md">
           <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="md" size="md" />
@@ -116,9 +117,12 @@ const RootLayout = () => {
                   </Text>
                   <Text size="xs">@{user.data?.username}</Text>
                 </div>
+
+                <AnimatedThemeToggler className="ml-auto" />
+
                 <Menu>
                   <Menu.Target>
-                    <ActionIcon ml="auto" variant="subtle">
+                    <ActionIcon variant="subtle">
                       <Icon icon="mdi:dots-vertical" className="text-2xl" />
                     </ActionIcon>
                   </Menu.Target>

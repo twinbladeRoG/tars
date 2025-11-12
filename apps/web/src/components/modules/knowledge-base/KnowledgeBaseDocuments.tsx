@@ -1,9 +1,8 @@
 'use no memo'; // !HOTFIX for TanStack Table with React Compiler - https://github.com/TanStack/table/issues/5567#issuecomment-2442997182
 
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router';
 import { Icon } from '@iconify/react';
-import { ActionIcon, Anchor, Badge, Card, Checkbox, Skeleton, Table, Title } from '@mantine/core';
+import { ActionIcon, Badge, Card, Checkbox, Skeleton, Table, Text, Title } from '@mantine/core';
 import {
   createColumnHelper,
   flexRender,
@@ -46,15 +45,15 @@ const KnowledgeBaseDocuments = () => {
       columnHelper.accessor('file', {
         header: 'File',
         cell: (info) => (
-          <Anchor
-            component={Link}
-            to={`/extraction/${info.getValue().id}`}
-            title={info.getValue().filename}>
+          <Text title={info.getValue().filename}>
             <div className="flex items-center gap-2">
-              <Icon icon={getFileIcon(info.getValue().content_type)} className="text-2xl" />
+              <Icon
+                icon={getFileIcon(info.getValue().content_type)}
+                className="text-2xl text-cyan-600"
+              />
               <span className="text-sm">{info.getValue().original_filename}</span>
             </div>
-          </Anchor>
+          </Text>
         ),
       }),
       columnHelper.accessor('status', {

@@ -3,6 +3,7 @@ import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import theme from './components/theme/theme';
 import Router from './Router';
 
 import '@mantine/core/styles.css';
@@ -15,7 +16,7 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <MantineProvider defaultColorScheme="dark">
+      <MantineProvider theme={theme} defaultColorScheme="dark">
         <ModalsProvider>
           <Router />
           <Notifications />

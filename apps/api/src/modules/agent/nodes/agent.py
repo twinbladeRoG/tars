@@ -22,7 +22,7 @@ class AgentNode:
     def __init__(self, candidate_controller: CandidateController) -> None:
         self.candidate_controller = candidate_controller
         self.model_factory = LlmModelFactory()
-        self.llm = self.model_factory.get_model("deepseek-r1")
+        self.llm = self.model_factory.get_model()
         self.tools = [send_email, check_candidate_calendar]
 
     def __call__(self, state: AgentState, config: RunnableConfig):

@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import { Accordion, ActionIcon, Badge, Button, Loader, Skeleton, Text } from '@mantine/core';
 import { useClipboard } from '@mantine/hooks';
 import Markdown from 'marked-react';
+import { motion } from 'motion/react';
 
 import { cn } from '@/lib/utils';
 import type { ICandidate, ICandidateWithResume, IFile } from '@/types';
@@ -78,7 +79,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const clipboard = useClipboard({ timeout: 500 });
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.75 }}
       className={cn('flex max-w-[90%] flex-col', {
         'self-end': isUser,
         'self-start': !isUser,
@@ -174,7 +178,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         onClick={() => clipboard.copy(content)}>
         <Icon icon={clipboard.copied ? 'mdi:check' : 'mdi:content-copy'} />
       </ActionIcon>
-    </div>
+    </motion.div>
   );
 };
 

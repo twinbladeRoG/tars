@@ -236,6 +236,11 @@ const Agent: React.FC<AgentProps> = ({ className }) => {
           onSubmit={handleSubmit}
           disabled={isStreaming}
           isStreaming={isStreaming}
+          placeholder={
+            selectedCandidate.data
+              ? `Ask anything about ${selectedCandidate.data.name}`
+              : 'Provide a job description'
+          }
         />
       </div>
 

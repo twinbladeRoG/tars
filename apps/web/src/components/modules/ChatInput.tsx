@@ -14,13 +14,20 @@ interface ChatInputProps {
   onSubmit?: (message: string) => void;
   disabled?: boolean;
   isStreaming?: boolean;
+  placeholder?: string;
 }
 
 const schema = yup.object({
   message: yup.string().required('Required'),
 });
 
-const ChatInput: React.FC<ChatInputProps> = ({ className, onSubmit, disabled, isStreaming }) => {
+const ChatInput: React.FC<ChatInputProps> = ({
+  className,
+  onSubmit,
+  disabled,
+  isStreaming,
+  placeholder,
+}) => {
   const form = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -64,7 +71,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ className, onSubmit, disabled, is
             {...field}
             onKeyDown={handleKeyDown}
             disabled={disabled}
-            placeholder="Ask anything"
+            placeholder={placeholder}
           />
         )}
       />

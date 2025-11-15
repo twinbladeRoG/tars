@@ -85,10 +85,12 @@ const AgentNode: React.FC<AgentNodeProps> = ({ data }) => {
   return (
     <div
       className={cn('relative w-full rounded border bg-blue-700/20 px-3 py-2', {
-        'bg-blue-400 dark:bg-blue-700': data.isVisited,
-        'bg-teal-600': isStartNode,
-        'bg-emerald-600': isEndNode,
-        'bg-green-600': data.isActive && (isStartNode || isEndNode),
+        'bg-blue-400 dark:bg-blue-700': data.isVisited && !(isStartNode || isEndNode),
+        'bg-teal-600/20': isStartNode,
+        'bg-emerald-600/20': isEndNode,
+        'bg-green-600': data.isVisited && (isStartNode || isEndNode),
+        'animate-pulse bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600':
+          data.isActive && isStartNode,
         'animate-pulse bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500':
           data.isActive && !isEndNode && !isStartNode,
         'flex size-10 items-center justify-center rounded-full border-0': isStartNode || isEndNode,
@@ -196,7 +198,7 @@ const AgentGraph: React.FC<AgentGraphProps> = ({ graph, visitedNodes }) => {
       getLayoutedElements({
         'elk.algorithm': 'org.eclipse.elk.mrtree',
       });
-    }, 1000);
+    }, 200);
 
     return () => {
       clearTimeout(timeout);
@@ -212,7 +214,7 @@ const AgentGraph: React.FC<AgentGraphProps> = ({ graph, visitedNodes }) => {
             data: {
               ...node.data,
               isActive: visitedNodes[visitedNodes.length - 1] === node.id,
-              isVisited: visitedNodes.includes(node.id) ? true : node.data?.isVisited,
+              isVisited: visitedNodes.includes(node.id) ? true : !!node.data?.isVisited,
             },
           };
         });

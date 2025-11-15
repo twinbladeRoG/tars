@@ -1,6 +1,7 @@
 import React from 'react';
 import { Anchor, Code, Divider, Table, Text, Title } from '@mantine/core';
 import { ReactRenderer } from 'marked-react';
+import { motion } from 'motion/react';
 
 const renderer = {
   list(children: React.ReactNode, ordered: boolean) {
@@ -49,7 +50,16 @@ const renderer = {
     return <Divider my="lg" />;
   },
   paragraph(text) {
-    return <Text size="sm">{text}</Text>;
+    return (
+      <Text
+        component={motion.p}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.25 }}
+        size="sm">
+        {text}
+      </Text>
+    );
   },
   listItem(children) {
     return (
